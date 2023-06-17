@@ -5,11 +5,11 @@ FROM golang:1.20.5-alpine AS build
 
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum ./
+COPY server/go.mod ./
+COPY server/go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY server/*.go ./
 
 RUN go build -o main .
 
