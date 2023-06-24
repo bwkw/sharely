@@ -1,0 +1,451 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: calendar
+  description: API for managing users, groups and schedules.
+servers:
+  - url: https://example.com/api/
+    description: 本番
+  - url: http://{host}:{port}/api/
+    description: 開発
+    variables:
+      host:
+        default: localhost
+      port:
+        default: '8080'
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sex:
+                  type: integer
+                  enum: [0, 1]
+                  description: Gender of the user (0 for male, 1 for female)
+                name:
+                  type: string
+                  description: Name of the user
+                email:
+                  type: string
+                  description: Email of the user
+                password:
+                  type: string
+                  description: Password for the user
+                image:
+                  type: string
+                  description: Image of the user
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Invalid input data
+        '500':
+          description: Internal Server Error
+    get:
+      summary: Get users by group
+      parameters:
+      - name: group
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: Group not found
+        '500':
+          description: Internal Server Error
+  
+  /users/{userId}:
+    put:
+      summary: Update a user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sex:
+                  type: integer
+                  enum: [0, 1]
+                  description: Gender of the user (0 for male, 1 for female)
+                name:
+                  type: string
+                  description: Name of the user
+                email:
+                  type: string
+                  description: Email of the user
+                password:
+                  type: string
+                  description: Password for the user
+                image:
+                  type: string
+                  description: Image of the user
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Invalid input data
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete a user
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+
+  /groups:
+    post:
+      summary: Create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Group created successfully
+        '400':
+          description: Invalid input data
+        '500':
+          description: Internal Server Error
+  
+  /groups/{groupId}/invitation:
+    post:
+      summary: Send an invitation to a user by email
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Invitation sent successfully
+        '400':
+          description: Invalid input data
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+
+  /invitations/{invitation_code}:
+    get:
+      summary: Confirm an invitation
+      parameters:
+        - name: invitation_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '404':
+          description: Invitation not found
+        '500':
+          description: Internal Server Error
+
+  /invitations/{invitation_code}/accept:
+    post:
+      summary: Accept an invitation
+      parameters:
+        - name: invitation_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Invitation accepted
+        '400':
+          description: Invalid input data
+        '404':
+          description: Invitation not found
+
+  /groups/{groupId}/schedules:
+    get:
+      summary: Search schedules for a group by keyword
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: keyword
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+        '404':
+          description: No schedules found with the provided keyword
+        '500':
+          description: Internal Server Error
+    post:
+      summary: Create a new schedule for a group
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                start_datetime:
+                  type: string
+                  format: date-time
+                end_datetime:
+                  type: string
+                  format: date-time
+                color:
+                  type: integer
+                  enum: [0, 1]
+                  description: Color (0 for red, 1 for blue)
+      responses:
+        '201':
+          description: Schedule created successfully
+        '400':
+          description: Invalid input data
+        '404':
+          description: Group not found
+        '500':
+          description: Internal Server Error
+          
+  /groups/{groupId}/schedules/{scheduleId}:
+    get:
+      summary: Get a specific schedule for a group
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: scheduleId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '404':
+          description: Schedule or Group not found
+        '500':
+          description: Internal Server Error
+    put:
+      summary: Update a schedule for a group
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: scheduleId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Schedule updated successfully
+        '400':
+          description: Invalid input data
+        '404':
+          description: Schedule or Group not found
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete a schedule for a group
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: scheduleId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Schedule deleted successfully
+        '404':
+          description: Schedule or Group not found
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for user
+        sex:
+          type: integer
+          enum: [0, 1]
+          description: Gender of the user (0 for male, 1 for female)
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          description: Email of the user
+        password:
+          type: string
+          description: Password for the user
+        image:
+          type: string
+          description: Image of the user
+        group:
+          $ref: '#/components/schemas/Group'
+          description: Group associated with the schedule
+          
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for group
+        name:
+          type: string
+          description: Name of the group
+    
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the schedule
+        title:
+          type: string
+          description: Title of the schedule
+        description:
+          type: string
+          description: Detailed description of the schedule
+        start_datetime:
+          type: string
+          format: date-time
+          description: Start date and time of the schedule
+        end_datetime:
+          type: string
+          format: date-time
+          description: End date and time of the schedule
+        color:
+          type: integer
+          enum: [0, 1]
+          description: Color (0 for red, 1 for blue)
+        user:
+          $ref: '#/components/schemas/User'
+          description: User associated with the schedule
+        group:
+          $ref: '#/components/schemas/Group'
+          description: Group associated with the schedule
+ 
+    Invitation:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: The user who sent the invitation
+        receiver:
+          type: string
+          description: The user who received the invitation
+        group:
+          type: string
+          description: The group name which is invited
