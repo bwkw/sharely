@@ -9,9 +9,9 @@ COPY server/go.mod ./
 COPY server/go.sum ./
 RUN go mod download
 
-COPY server/*.go ./
+COPY server/ ./
 
-RUN go build -o main .
+RUN go build -o main ./app/main.go
 
 ##
 ## Deploy
