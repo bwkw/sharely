@@ -1,4 +1,4 @@
-package http
+package group
 
 import (
 	"github.com/labstack/echo/v4"
@@ -6,22 +6,22 @@ import (
 )
 
 type GroupHandler struct {
-	GUsecase usecase.Usecase
+	gusecase group.IGroupUsecase
 }
 
-func NewGroupHandler(router EchoRouter, si GroupServerInterface, baseURL string) {
+func NewGroupHandler(e *echo.Echo, gu group.IGroupUsecase, baseURL string) {
 	handler := &GroupHandler{
-		Handler: si,
+		GUsecase: gu,
 	}
 
-	router.POST(baseURL+"/groups", handler.PostGroups)
-	router.POST(baseURL+"/groups/:groupId/invitation", handler.PostGroupsGroupIdInvitation)
+	e.POST(baseURL+"/groups", handler.PostGroups)
+	e.POST(baseURL+"/groups/:groupId/invitation", handler.PostGroupsGroupIdInvitation)
 }
 
 func (h *GroupHandler) PostGroups(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, nil)
 }
 
-func (h *GroupHandler) PostGroupsGroupIdInvitation(ctx echo.Context, groupId int) error {
+func (h *GroupHandler) PostGroupsGroupIdInvitation(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, nil)
 }
