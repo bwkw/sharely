@@ -1,0 +1,53 @@
+@startuml
+
+entity "users" {
+    * id: int <<PK>>
+    --
+    * sex: int
+    * name: varchar
+    * email: varchar
+    * password: varchar
+    * image: varchar
+}
+
+entity "groups" {
+    * id: int <<PK>>
+    --
+    * name: varchar
+}
+
+entity "user_group" {
+    * user_id: int <<PK>>
+    * group_id: int <<PK>>
+}
+
+entity "schedules" {
+    * id: int <<PK>>
+    --
+    * title: varchar
+    * description: text
+    * start_datetime: datetime
+    * end_datetime: datetime
+    * is_repeated: boolean
+    * color: int
+    * user_id: int
+    * group_id: int
+}
+
+entity "invitations" {
+    * id: int <<PK>>
+    --
+    * sender_id: int
+    * receiver_id: int
+    * group_id: int
+}
+
+users ||--o{ user_group
+groups ||--o{ user_group
+users ||--o{ schedules
+groups ||--o{ schedules
+users ||--o{ invitations : sender
+users ||--o{ invitations : receiver
+groups ||--o{ invitations
+
+@enduml
