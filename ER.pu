@@ -1,45 +1,56 @@
 @startuml
 
-entity "users" {
-    * id: int <<PK>>
+entity "users" as users {
+    + id : int [PK]
     --
-    * sex: int
-    * name: varchar
-    * email: varchar
-    * password: varchar
-    * image: varchar
+    sex : int
+    name : varchar
+    email : varchar
+    password : varchar
+    image : varchar
+    created_at : datetime
+    updated_at : datetime
 }
 
-entity "groups" {
-    * id: int <<PK>>
+entity "groups" as groups {
+    + id : int [PK]
     --
-    * name: varchar
+    name : varchar
+    created_at : datetime
+    updated_at : datetime
 }
 
-entity "user_group" {
-    * user_id: int <<PK>>
-    * group_id: int <<PK>>
+entity "user_group" as user_group {
+    + user_id : int [PK]
+    + group_id : int [PK]
+    --
+    created_at : datetime
+    updated_at : datetime
 }
 
-entity "schedules" {
-    * id: int <<PK>>
+entity "schedules" as schedules {
+    + id : int [PK]
     --
-    * title: varchar
-    * description: text
-    * start_datetime: datetime
-    * end_datetime: datetime
-    * is_repeated: boolean
-    * color: int
-    * user_id: int
-    * group_id: int
+    title : varchar
+    description : text
+    start_datetime : datetime
+    end_datetime : datetime
+    is_repeated : boolean
+    color : int
+    user_id : int
+    group_id : int
+    created_at : datetime
+    updated_at : datetime
 }
 
-entity "invitations" {
-    * id: int <<PK>>
+entity "invitations" as invitations {
+    + id : int [PK]
     --
-    * sender_id: int
-    * receiver_id: int
-    * group_id: int
+    sender_id : int
+    receiver_id : int
+    group_id : int
+    created_at : datetime
+    updated_at : datetime
 }
 
 users ||--o{ user_group
