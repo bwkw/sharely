@@ -38,8 +38,7 @@ entity "schedules" as schedules {
     end_datetime : datetime
     is_repeated : boolean
     color : int
-    user_id : int [FK]
-    group_id : int [FK]
+    user_group_id : int [FK]
     created_at : datetime
     updated_at : datetime
 }
@@ -56,8 +55,7 @@ entity "invitations" as invitations {
 
 users ||--o{ user_group
 groups ||--o{ user_group
-users ||--o{ schedules
-groups ||--o{ schedules
+user_group ||--o{ schedules
 users ||--o{ groups : creator
 users ||--o{ invitations : sender
 users ||--o{ invitations : receiver
