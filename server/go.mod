@@ -1,4 +1,4 @@
-module github.com/bwkw/calendar
+module github.com/bwkw/sharely
 
 go 1.20
 
