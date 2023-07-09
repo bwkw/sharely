@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/bwkw/sharely/internal/infrastructure/repository/rdb"
-	handler "github.com/bwkw/sharely/internal/interface/http"
+	"github.com/bwkw/sharely/internal/interface/http/handler"
 	"github.com/bwkw/sharely/internal/usecase/usecase"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
