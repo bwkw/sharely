@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: calendar
+  title: sharely
   description: API for managing users, groups and schedules.
 servers:
   - url: https://example.com/api/
@@ -335,9 +335,16 @@ paths:
                   type: string
                 description:
                   type: string
-                date:
+                start_datetime:
                   type: string
                   format: date-time
+                end_datetime:
+                  type: string
+                  format: date-time
+                color:
+                  type: integer
+                  enum: [0, 1]
+                  description: Color (0 for red, 1 for blue)
       responses:
         '200':
           description: Schedule updated successfully
@@ -386,9 +393,6 @@ components:
         email:
           type: string
           description: Email of the user
-        password:
-          type: string
-          description: Password for the user
         image:
           type: string
           description: Image of the user
