@@ -28,13 +28,10 @@ Calendar
     | updated_at | datetime |  | レコードが最後に更新された日時 |
 
 3. **user_groupテーブル**    
-    ※ user_idとgroup_idは複合ユニーク
-    
     | Column | Type | Constraints | Description |
-    | --- | --- | --- | --- |
-    | id | int | PK, Auto Increment | ユーザーとグループの関係の一意なID |
-    | user_id | int | FK users.id, Not Null | ユーザーの一意なID |
-    | group_id | int | FK groups.id, Not Null | グループの一意なID |
+    | --- | ---- | --- | --- |
+    | user_id | int | PK, FK (users.id), Not Null | ユーザーの一意なID |
+    | group_id | int  | PK, FK (groups.id), Not Null | グループの一意なID |
     | created_at | datetime |  | レコードが作成された日時 |
     | updated_at | datetime |  | レコードが最後に更新された日時 |
 
@@ -50,7 +47,8 @@ Calendar
     | is_repeated | boolean | Not Null | スケジュールが定期的かどうか |
     | is_shared_to_gc | boolean | Not Null | スケジュールがGoogle Calendarに共有されたか |
     | color | int | Not Null | スケジュールを表示する色のコード |
-    | user_group_id | int | FK, Not Null | スケジュールを作成したユーザグループーID |
+    | user_id | int | FK, Not Null | スケジュールを作成したユーザーID   |
+    | group_id | int | FK, Not Null | スケジュールが関連するグループID   |
     | created_at | datetime |  | レコードが作成された日時 |
     | updated_at | datetime |  | レコードが最後に更新された日時 |
 
