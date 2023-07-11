@@ -1,6 +1,6 @@
 @startuml
 
-entity "users" as users {
+entity "users" {
   + id : int [PK]
   --
   sex : int
@@ -12,7 +12,7 @@ entity "users" as users {
   updated_at : datetime
 }
 
-entity "groups" as groups {
+entity "groups" {
   + id : int [PK]
   --
   name : varchar
@@ -23,7 +23,7 @@ entity "groups" as groups {
   updated_at : datetime
 }
 
-entity "user_group" as user_group {
+entity "user_group" {
   + user_id : int [PK, FK users.id]
   + group_id : int [PK, FK groups.id]
   --
@@ -31,7 +31,7 @@ entity "user_group" as user_group {
   updated_at : datetime
 }
 
-entity "schedules" as schedules {
+entity "schedules" {
   + id : int [PK]
   --
   title : varchar
@@ -47,7 +47,7 @@ entity "schedules" as schedules {
   updated_at : datetime
 }
 
-entity "invitations" as invitations {
+entity "invitations" {
   + id : int [PK]
   --
   sender_id : int [FK users.id]
