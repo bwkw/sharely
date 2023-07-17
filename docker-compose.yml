@@ -3,6 +3,13 @@ services:
   server:
     build: 
       context: .
-      dockerfile: infra/docker/server/Dockerfile
+      dockerfile: infra/docker/server/Dockerfile.dev
     ports:
-      - "8080:8080"
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: ./server
+        target: /server
