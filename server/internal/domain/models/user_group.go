@@ -24,9 +24,8 @@ import (
 
 // UserGroup is an object representing the database table.
 type UserGroup struct {
-	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	UserID    null.Int  `boil:"user_id" json:"user_id,omitempty" toml:"user_id" yaml:"user_id,omitempty"`
-	GroupID   null.Int  `boil:"group_id" json:"group_id,omitempty" toml:"group_id" yaml:"group_id,omitempty"`
+	UserID    int       `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	GroupID   int       `boil:"group_id" json:"group_id" toml:"group_id" yaml:"group_id"`
 	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
 	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 
@@ -35,13 +34,11 @@ type UserGroup struct {
 }
 
 var UserGroupColumns = struct {
-	ID        string
 	UserID    string
 	GroupID   string
 	CreatedAt string
 	UpdatedAt string
 }{
-	ID:        "id",
 	UserID:    "user_id",
 	GroupID:   "group_id",
 	CreatedAt: "created_at",
@@ -49,13 +46,11 @@ var UserGroupColumns = struct {
 }
 
 var UserGroupTableColumns = struct {
-	ID        string
 	UserID    string
 	GroupID   string
 	CreatedAt string
 	UpdatedAt string
 }{
-	ID:        "user_group.id",
 	UserID:    "user_group.user_id",
 	GroupID:   "user_group.group_id",
 	CreatedAt: "user_group.created_at",
@@ -64,59 +59,31 @@ var UserGroupTableColumns = struct {
 
 // Generated where
 
-type whereHelpernull_Int struct{ field string }
-
-func (w whereHelpernull_Int) EQ(x null.Int) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_Int) NEQ(x null.Int) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_Int) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_Int) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_Int) LT(x null.Int) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_Int) LTE(x null.Int) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_Int) GT(x null.Int) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var UserGroupWhere = struct {
-	ID        whereHelperint
-	UserID    whereHelpernull_Int
-	GroupID   whereHelpernull_Int
+	UserID    whereHelperint
+	GroupID   whereHelperint
 	CreatedAt whereHelpernull_Time
 	UpdatedAt whereHelpernull_Time
 }{
-	ID:        whereHelperint{field: "`user_group`.`id`"},
-	UserID:    whereHelpernull_Int{field: "`user_group`.`user_id`"},
-	GroupID:   whereHelpernull_Int{field: "`user_group`.`group_id`"},
+	UserID:    whereHelperint{field: "`user_group`.`user_id`"},
+	GroupID:   whereHelperint{field: "`user_group`.`group_id`"},
 	CreatedAt: whereHelpernull_Time{field: "`user_group`.`created_at`"},
 	UpdatedAt: whereHelpernull_Time{field: "`user_group`.`updated_at`"},
 }
 
 // UserGroupRels is where relationship names are stored.
 var UserGroupRels = struct {
-	User      string
-	Group     string
-	Schedules string
+	User  string
+	Group string
 }{
-	User:      "User",
-	Group:     "Group",
-	Schedules: "Schedules",
+	User:  "User",
+	Group: "Group",
 }
 
 // userGroupR is where relationships are stored.
 type userGroupR struct {
-	User      *User         `boil:"User" json:"User" toml:"User" yaml:"User"`
-	Group     *Group        `boil:"Group" json:"Group" toml:"Group" yaml:"Group"`
-	Schedules ScheduleSlice `boil:"Schedules" json:"Schedules" toml:"Schedules" yaml:"Schedules"`
+	User  *User  `boil:"User" json:"User" toml:"User" yaml:"User"`
+	Group *Group `boil:"Group" json:"Group" toml:"Group" yaml:"Group"`
 }
 
 // NewStruct creates a new relationship struct
@@ -128,10 +95,10 @@ func (*userGroupR) NewStruct() *userGroupR {
 type userGroupL struct{}
 
 var (
-	userGroupAllColumns            = []string{"id", "user_id", "group_id", "created_at", "updated_at"}
+	userGroupAllColumns            = []string{"user_id", "group_id", "created_at", "updated_at"}
 	userGroupColumnsWithoutDefault = []string{"user_id", "group_id", "created_at", "updated_at"}
-	userGroupColumnsWithDefault    = []string{"id"}
-	userGroupPrimaryKeyColumns     = []string{"id"}
+	userGroupColumnsWithDefault    = []string{}
+	userGroupPrimaryKeyColumns     = []string{"user_id", "group_id"}
 )
 
 type (
@@ -437,27 +404,6 @@ func (o *UserGroup) Group(mods ...qm.QueryMod) groupQuery {
 	return query
 }
 
-// Schedules retrieves all the schedule's Schedules with an executor.
-func (o *UserGroup) Schedules(mods ...qm.QueryMod) scheduleQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("`schedules`.`user_group_id`=?", o.ID),
-	)
-
-	query := Schedules(queryMods...)
-	queries.SetFrom(query.Query, "`schedules`")
-
-	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"`schedules`.*"})
-	}
-
-	return query
-}
-
 // LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
 func (userGroupL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUserGroup interface{}, mods queries.Applicator) error {
@@ -475,9 +421,7 @@ func (userGroupL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular
 		if object.R == nil {
 			object.R = &userGroupR{}
 		}
-		if !queries.IsNil(object.UserID) {
-			args = append(args, object.UserID)
-		}
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -487,14 +431,12 @@ func (userGroupL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.UserID) {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.UserID) {
-				args = append(args, obj.UserID)
-			}
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -552,7 +494,7 @@ func (userGroupL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.UserID, foreign.ID) {
+			if local.UserID == foreign.ID {
 				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
@@ -583,9 +525,7 @@ func (userGroupL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 		if object.R == nil {
 			object.R = &userGroupR{}
 		}
-		if !queries.IsNil(object.GroupID) {
-			args = append(args, object.GroupID)
-		}
+		args = append(args, object.GroupID)
 
 	} else {
 	Outer:
@@ -595,14 +535,12 @@ func (userGroupL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.GroupID) {
+				if a == obj.GroupID {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.GroupID) {
-				args = append(args, obj.GroupID)
-			}
+			args = append(args, obj.GroupID)
 
 		}
 	}
@@ -660,110 +598,12 @@ func (userGroupL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.GroupID, foreign.ID) {
+			if local.GroupID == foreign.ID {
 				local.R.Group = foreign
 				if foreign.R == nil {
 					foreign.R = &groupR{}
 				}
 				foreign.R.UserGroups = append(foreign.R.UserGroups, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadSchedules allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (userGroupL) LoadSchedules(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUserGroup interface{}, mods queries.Applicator) error {
-	var slice []*UserGroup
-	var object *UserGroup
-
-	if singular {
-		object = maybeUserGroup.(*UserGroup)
-	} else {
-		slice = *maybeUserGroup.(*[]*UserGroup)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &userGroupR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &userGroupR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`schedules`),
-		qm.WhereIn(`schedules.user_group_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load schedules")
-	}
-
-	var resultSlice []*Schedule
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice schedules")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on schedules")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for schedules")
-	}
-
-	if len(scheduleAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Schedules = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &scheduleR{}
-			}
-			foreign.R.UserGroup = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.UserGroupID {
-				local.R.Schedules = append(local.R.Schedules, foreign)
-				if foreign.R == nil {
-					foreign.R = &scheduleR{}
-				}
-				foreign.R.UserGroup = local
 				break
 			}
 		}
@@ -788,7 +628,7 @@ func (o *UserGroup) SetUser(ctx context.Context, exec boil.ContextExecutor, inse
 		strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
 		strmangle.WhereClause("`", "`", 0, userGroupPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.ID}
+	values := []interface{}{related.ID, o.UserID, o.GroupID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -799,7 +639,7 @@ func (o *UserGroup) SetUser(ctx context.Context, exec boil.ContextExecutor, inse
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.UserID, related.ID)
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &userGroupR{
 			User: related,
@@ -819,39 +659,6 @@ func (o *UserGroup) SetUser(ctx context.Context, exec boil.ContextExecutor, inse
 	return nil
 }
 
-// RemoveUser relationship.
-// Sets o.R.User to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *UserGroup) RemoveUser(ctx context.Context, exec boil.ContextExecutor, related *User) error {
-	var err error
-
-	queries.SetScanner(&o.UserID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	if o.R != nil {
-		o.R.User = nil
-	}
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.UserGroups {
-		if queries.Equal(o.UserID, ri.UserID) {
-			continue
-		}
-
-		ln := len(related.R.UserGroups)
-		if ln > 1 && i < ln-1 {
-			related.R.UserGroups[i] = related.R.UserGroups[ln-1]
-		}
-		related.R.UserGroups = related.R.UserGroups[:ln-1]
-		break
-	}
-	return nil
-}
-
 // SetGroup of the userGroup to the related item.
 // Sets o.R.Group to related.
 // Adds o to related.R.UserGroups.
@@ -868,7 +675,7 @@ func (o *UserGroup) SetGroup(ctx context.Context, exec boil.ContextExecutor, ins
 		strmangle.SetParamNames("`", "`", 0, []string{"group_id"}),
 		strmangle.WhereClause("`", "`", 0, userGroupPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.ID}
+	values := []interface{}{related.ID, o.UserID, o.GroupID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -879,7 +686,7 @@ func (o *UserGroup) SetGroup(ctx context.Context, exec boil.ContextExecutor, ins
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.GroupID, related.ID)
+	o.GroupID = related.ID
 	if o.R == nil {
 		o.R = &userGroupR{
 			Group: related,
@@ -899,92 +706,6 @@ func (o *UserGroup) SetGroup(ctx context.Context, exec boil.ContextExecutor, ins
 	return nil
 }
 
-// RemoveGroup relationship.
-// Sets o.R.Group to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *UserGroup) RemoveGroup(ctx context.Context, exec boil.ContextExecutor, related *Group) error {
-	var err error
-
-	queries.SetScanner(&o.GroupID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("group_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	if o.R != nil {
-		o.R.Group = nil
-	}
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.UserGroups {
-		if queries.Equal(o.GroupID, ri.GroupID) {
-			continue
-		}
-
-		ln := len(related.R.UserGroups)
-		if ln > 1 && i < ln-1 {
-			related.R.UserGroups[i] = related.R.UserGroups[ln-1]
-		}
-		related.R.UserGroups = related.R.UserGroups[:ln-1]
-		break
-	}
-	return nil
-}
-
-// AddSchedules adds the given related objects to the existing relationships
-// of the user_group, optionally inserting them as new records.
-// Appends related to o.R.Schedules.
-// Sets related.R.UserGroup appropriately.
-func (o *UserGroup) AddSchedules(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Schedule) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.UserGroupID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE `schedules` SET %s WHERE %s",
-				strmangle.SetParamNames("`", "`", 0, []string{"user_group_id"}),
-				strmangle.WhereClause("`", "`", 0, schedulePrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.UserGroupID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &userGroupR{
-			Schedules: related,
-		}
-	} else {
-		o.R.Schedules = append(o.R.Schedules, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &scheduleR{
-				UserGroup: o,
-			}
-		} else {
-			rel.R.UserGroup = o
-		}
-	}
-	return nil
-}
-
 // UserGroups retrieves all the records using an executor.
 func UserGroups(mods ...qm.QueryMod) userGroupQuery {
 	mods = append(mods, qm.From("`user_group`"))
@@ -993,7 +714,7 @@ func UserGroups(mods ...qm.QueryMod) userGroupQuery {
 
 // FindUserGroup retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindUserGroup(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*UserGroup, error) {
+func FindUserGroup(ctx context.Context, exec boil.ContextExecutor, userID int, groupID int, selectCols ...string) (*UserGroup, error) {
 	userGroupObj := &UserGroup{}
 
 	sel := "*"
@@ -1001,10 +722,10 @@ func FindUserGroup(ctx context.Context, exec boil.ContextExecutor, iD int, selec
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from `user_group` where `id`=?", sel,
+		"select %s from `user_group` where `user_id`=? AND `group_id`=?", sel,
 	)
 
-	q := queries.Raw(query, iD)
+	q := queries.Raw(query, userID, groupID)
 
 	err := q.Bind(ctx, exec, userGroupObj)
 	if err != nil {
@@ -1090,31 +811,21 @@ func (o *UserGroup) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	result, err := exec.ExecContext(ctx, cache.query, vals...)
+	_, err = exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to insert into user_group")
 	}
 
-	var lastID int64
 	var identifierCols []interface{}
 
 	if len(cache.retMapping) == 0 {
 		goto CacheNoHooks
 	}
 
-	lastID, err = result.LastInsertId()
-	if err != nil {
-		return ErrSyncFail
-	}
-
-	o.ID = int(lastID)
-	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == userGroupMapping["id"] {
-		goto CacheNoHooks
-	}
-
 	identifierCols = []interface{}{
-		o.ID,
+		o.UserID,
+		o.GroupID,
 	}
 
 	if boil.IsDebug(ctx) {
@@ -1271,9 +982,7 @@ func (o UserGroupSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-var mySQLUserGroupUniqueColumns = []string{
-	"id",
-}
+var mySQLUserGroupUniqueColumns = []string{}
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
@@ -1377,27 +1086,16 @@ func (o *UserGroup) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	result, err := exec.ExecContext(ctx, cache.query, vals...)
+	_, err = exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to upsert for user_group")
 	}
 
-	var lastID int64
 	var uniqueMap []uint64
 	var nzUniqueCols []interface{}
 
 	if len(cache.retMapping) == 0 {
-		goto CacheNoHooks
-	}
-
-	lastID, err = result.LastInsertId()
-	if err != nil {
-		return ErrSyncFail
-	}
-
-	o.ID = int(lastID)
-	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == userGroupMapping["id"] {
 		goto CacheNoHooks
 	}
 
@@ -1439,7 +1137,7 @@ func (o *UserGroup) Delete(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), userGroupPrimaryKeyMapping)
-	sql := "DELETE FROM `user_group` WHERE `id`=?"
+	sql := "DELETE FROM `user_group` WHERE `user_id`=? AND `group_id`=?"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1536,7 +1234,7 @@ func (o UserGroupSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserGroup) Reload(ctx context.Context, exec boil.ContextExecutor) error {
-	ret, err := FindUserGroup(ctx, exec, o.ID)
+	ret, err := FindUserGroup(ctx, exec, o.UserID, o.GroupID)
 	if err != nil {
 		return err
 	}
@@ -1575,16 +1273,16 @@ func (o *UserGroupSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 }
 
 // UserGroupExists checks if the UserGroup row exists.
-func UserGroupExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func UserGroupExists(ctx context.Context, exec boil.ContextExecutor, userID int, groupID int) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from `user_group` where `id`=? limit 1)"
+	sql := "select exists(select 1 from `user_group` where `user_id`=? AND `group_id`=? limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
 		fmt.Fprintln(writer, sql)
-		fmt.Fprintln(writer, iD)
+		fmt.Fprintln(writer, userID, groupID)
 	}
-	row := exec.QueryRowContext(ctx, sql, iD)
+	row := exec.QueryRowContext(ctx, sql, userID, groupID)
 
 	err := row.Scan(&exists)
 	if err != nil {

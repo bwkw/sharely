@@ -30,8 +30,10 @@ type Schedule struct {
 	StartDatetime time.Time   `boil:"start_datetime" json:"start_datetime" toml:"start_datetime" yaml:"start_datetime"`
 	EndDatetime   time.Time   `boil:"end_datetime" json:"end_datetime" toml:"end_datetime" yaml:"end_datetime"`
 	IsRepeated    bool        `boil:"is_repeated" json:"is_repeated" toml:"is_repeated" yaml:"is_repeated"`
+	IsSharedToGC  bool        `boil:"is_shared_to_gc" json:"is_shared_to_gc" toml:"is_shared_to_gc" yaml:"is_shared_to_gc"`
 	Color         int         `boil:"color" json:"color" toml:"color" yaml:"color"`
-	UserGroupID   int         `boil:"user_group_id" json:"user_group_id" toml:"user_group_id" yaml:"user_group_id"`
+	UserID        int         `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	GroupID       int         `boil:"group_id" json:"group_id" toml:"group_id" yaml:"group_id"`
 	CreatedAt     null.Time   `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
 	UpdatedAt     null.Time   `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 
@@ -46,8 +48,10 @@ var ScheduleColumns = struct {
 	StartDatetime string
 	EndDatetime   string
 	IsRepeated    string
+	IsSharedToGC  string
 	Color         string
-	UserGroupID   string
+	UserID        string
+	GroupID       string
 	CreatedAt     string
 	UpdatedAt     string
 }{
@@ -57,8 +61,10 @@ var ScheduleColumns = struct {
 	StartDatetime: "start_datetime",
 	EndDatetime:   "end_datetime",
 	IsRepeated:    "is_repeated",
+	IsSharedToGC:  "is_shared_to_gc",
 	Color:         "color",
-	UserGroupID:   "user_group_id",
+	UserID:        "user_id",
+	GroupID:       "group_id",
 	CreatedAt:     "created_at",
 	UpdatedAt:     "updated_at",
 }
@@ -70,8 +76,10 @@ var ScheduleTableColumns = struct {
 	StartDatetime string
 	EndDatetime   string
 	IsRepeated    string
+	IsSharedToGC  string
 	Color         string
-	UserGroupID   string
+	UserID        string
+	GroupID       string
 	CreatedAt     string
 	UpdatedAt     string
 }{
@@ -81,36 +89,15 @@ var ScheduleTableColumns = struct {
 	StartDatetime: "schedules.start_datetime",
 	EndDatetime:   "schedules.end_datetime",
 	IsRepeated:    "schedules.is_repeated",
+	IsSharedToGC:  "schedules.is_shared_to_gc",
 	Color:         "schedules.color",
-	UserGroupID:   "schedules.user_group_id",
+	UserID:        "schedules.user_id",
+	GroupID:       "schedules.group_id",
 	CreatedAt:     "schedules.created_at",
 	UpdatedAt:     "schedules.updated_at",
 }
 
 // Generated where
-
-type whereHelpernull_String struct{ field string }
-
-func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
 
 type whereHelpertime_Time struct{ field string }
 
@@ -149,8 +136,10 @@ var ScheduleWhere = struct {
 	StartDatetime whereHelpertime_Time
 	EndDatetime   whereHelpertime_Time
 	IsRepeated    whereHelperbool
+	IsSharedToGC  whereHelperbool
 	Color         whereHelperint
-	UserGroupID   whereHelperint
+	UserID        whereHelperint
+	GroupID       whereHelperint
 	CreatedAt     whereHelpernull_Time
 	UpdatedAt     whereHelpernull_Time
 }{
@@ -160,22 +149,27 @@ var ScheduleWhere = struct {
 	StartDatetime: whereHelpertime_Time{field: "`schedules`.`start_datetime`"},
 	EndDatetime:   whereHelpertime_Time{field: "`schedules`.`end_datetime`"},
 	IsRepeated:    whereHelperbool{field: "`schedules`.`is_repeated`"},
+	IsSharedToGC:  whereHelperbool{field: "`schedules`.`is_shared_to_gc`"},
 	Color:         whereHelperint{field: "`schedules`.`color`"},
-	UserGroupID:   whereHelperint{field: "`schedules`.`user_group_id`"},
+	UserID:        whereHelperint{field: "`schedules`.`user_id`"},
+	GroupID:       whereHelperint{field: "`schedules`.`group_id`"},
 	CreatedAt:     whereHelpernull_Time{field: "`schedules`.`created_at`"},
 	UpdatedAt:     whereHelpernull_Time{field: "`schedules`.`updated_at`"},
 }
 
 // ScheduleRels is where relationship names are stored.
 var ScheduleRels = struct {
-	UserGroup string
+	User  string
+	Group string
 }{
-	UserGroup: "UserGroup",
+	User:  "User",
+	Group: "Group",
 }
 
 // scheduleR is where relationships are stored.
 type scheduleR struct {
-	UserGroup *UserGroup `boil:"UserGroup" json:"UserGroup" toml:"UserGroup" yaml:"UserGroup"`
+	User  *User  `boil:"User" json:"User" toml:"User" yaml:"User"`
+	Group *Group `boil:"Group" json:"Group" toml:"Group" yaml:"Group"`
 }
 
 // NewStruct creates a new relationship struct
@@ -187,8 +181,8 @@ func (*scheduleR) NewStruct() *scheduleR {
 type scheduleL struct{}
 
 var (
-	scheduleAllColumns            = []string{"id", "title", "description", "start_datetime", "end_datetime", "is_repeated", "color", "user_group_id", "created_at", "updated_at"}
-	scheduleColumnsWithoutDefault = []string{"title", "description", "start_datetime", "end_datetime", "is_repeated", "color", "user_group_id", "created_at", "updated_at"}
+	scheduleAllColumns            = []string{"id", "title", "description", "start_datetime", "end_datetime", "is_repeated", "is_shared_to_gc", "color", "user_id", "group_id", "created_at", "updated_at"}
+	scheduleColumnsWithoutDefault = []string{"title", "description", "start_datetime", "end_datetime", "is_repeated", "is_shared_to_gc", "color", "user_id", "group_id", "created_at", "updated_at"}
 	scheduleColumnsWithDefault    = []string{"id"}
 	schedulePrimaryKeyColumns     = []string{"id"}
 )
@@ -468,23 +462,37 @@ func (q scheduleQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (b
 	return count > 0, nil
 }
 
-// UserGroup pointed to by the foreign key.
-func (o *Schedule) UserGroup(mods ...qm.QueryMod) userGroupQuery {
+// User pointed to by the foreign key.
+func (o *Schedule) User(mods ...qm.QueryMod) userQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("`id` = ?", o.UserGroupID),
+		qm.Where("`id` = ?", o.UserID),
 	}
 
 	queryMods = append(queryMods, mods...)
 
-	query := UserGroups(queryMods...)
-	queries.SetFrom(query.Query, "`user_group`")
+	query := Users(queryMods...)
+	queries.SetFrom(query.Query, "`users`")
 
 	return query
 }
 
-// LoadUserGroup allows an eager lookup of values, cached into the
+// Group pointed to by the foreign key.
+func (o *Schedule) Group(mods ...qm.QueryMod) groupQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("`id` = ?", o.GroupID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Groups(queryMods...)
+	queries.SetFrom(query.Query, "`groups`")
+
+	return query
+}
+
+// LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSchedule interface{}, mods queries.Applicator) error {
+func (scheduleL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSchedule interface{}, mods queries.Applicator) error {
 	var slice []*Schedule
 	var object *Schedule
 
@@ -499,7 +507,7 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 		if object.R == nil {
 			object.R = &scheduleR{}
 		}
-		args = append(args, object.UserGroupID)
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -509,12 +517,12 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 			}
 
 			for _, a := range args {
-				if a == obj.UserGroupID {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.UserGroupID)
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -524,8 +532,8 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 	}
 
 	query := NewQuery(
-		qm.From(`user_group`),
-		qm.WhereIn(`user_group.id in ?`, args...),
+		qm.From(`users`),
+		qm.WhereIn(`users.id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -533,19 +541,19 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load UserGroup")
+		return errors.Wrap(err, "failed to eager load User")
 	}
 
-	var resultSlice []*UserGroup
+	var resultSlice []*User
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice UserGroup")
+		return errors.Wrap(err, "failed to bind eager loaded slice User")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for user_group")
+		return errors.Wrap(err, "failed to close results of eager load for users")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for user_group")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for users")
 	}
 
 	if len(scheduleAfterSelectHooks) != 0 {
@@ -562,9 +570,9 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.UserGroup = foreign
+		object.R.User = foreign
 		if foreign.R == nil {
-			foreign.R = &userGroupR{}
+			foreign.R = &userR{}
 		}
 		foreign.R.Schedules = append(foreign.R.Schedules, object)
 		return nil
@@ -572,10 +580,10 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.UserGroupID == foreign.ID {
-				local.R.UserGroup = foreign
+			if local.UserID == foreign.ID {
+				local.R.User = foreign
 				if foreign.R == nil {
-					foreign.R = &userGroupR{}
+					foreign.R = &userR{}
 				}
 				foreign.R.Schedules = append(foreign.R.Schedules, local)
 				break
@@ -586,10 +594,114 @@ func (scheduleL) LoadUserGroup(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// SetUserGroup of the schedule to the related item.
-// Sets o.R.UserGroup to related.
+// LoadGroup allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (scheduleL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSchedule interface{}, mods queries.Applicator) error {
+	var slice []*Schedule
+	var object *Schedule
+
+	if singular {
+		object = maybeSchedule.(*Schedule)
+	} else {
+		slice = *maybeSchedule.(*[]*Schedule)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &scheduleR{}
+		}
+		args = append(args, object.GroupID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &scheduleR{}
+			}
+
+			for _, a := range args {
+				if a == obj.GroupID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.GroupID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`groups`),
+		qm.WhereIn(`groups.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Group")
+	}
+
+	var resultSlice []*Group
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Group")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for groups")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for groups")
+	}
+
+	if len(scheduleAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Group = foreign
+		if foreign.R == nil {
+			foreign.R = &groupR{}
+		}
+		foreign.R.Schedules = append(foreign.R.Schedules, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.GroupID == foreign.ID {
+				local.R.Group = foreign
+				if foreign.R == nil {
+					foreign.R = &groupR{}
+				}
+				foreign.R.Schedules = append(foreign.R.Schedules, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetUser of the schedule to the related item.
+// Sets o.R.User to related.
 // Adds o to related.R.Schedules.
-func (o *Schedule) SetUserGroup(ctx context.Context, exec boil.ContextExecutor, insert bool, related *UserGroup) error {
+func (o *Schedule) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -599,7 +711,7 @@ func (o *Schedule) SetUserGroup(ctx context.Context, exec boil.ContextExecutor, 
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE `schedules` SET %s WHERE %s",
-		strmangle.SetParamNames("`", "`", 0, []string{"user_group_id"}),
+		strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
 		strmangle.WhereClause("`", "`", 0, schedulePrimaryKeyColumns),
 	)
 	values := []interface{}{related.ID, o.ID}
@@ -613,17 +725,64 @@ func (o *Schedule) SetUserGroup(ctx context.Context, exec boil.ContextExecutor, 
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.UserGroupID = related.ID
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &scheduleR{
-			UserGroup: related,
+			User: related,
 		}
 	} else {
-		o.R.UserGroup = related
+		o.R.User = related
 	}
 
 	if related.R == nil {
-		related.R = &userGroupR{
+		related.R = &userR{
+			Schedules: ScheduleSlice{o},
+		}
+	} else {
+		related.R.Schedules = append(related.R.Schedules, o)
+	}
+
+	return nil
+}
+
+// SetGroup of the schedule to the related item.
+// Sets o.R.Group to related.
+// Adds o to related.R.Schedules.
+func (o *Schedule) SetGroup(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Group) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE `schedules` SET %s WHERE %s",
+		strmangle.SetParamNames("`", "`", 0, []string{"group_id"}),
+		strmangle.WhereClause("`", "`", 0, schedulePrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.GroupID = related.ID
+	if o.R == nil {
+		o.R = &scheduleR{
+			Group: related,
+		}
+	} else {
+		o.R.Group = related
+	}
+
+	if related.R == nil {
+		related.R = &groupR{
 			Schedules: ScheduleSlice{o},
 		}
 	} else {

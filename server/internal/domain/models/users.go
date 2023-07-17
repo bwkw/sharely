@@ -104,11 +104,13 @@ var UserRels = struct {
 	CreatorGroups       string
 	SenderInvitations   string
 	ReceiverInvitations string
+	Schedules           string
 	UserGroups          string
 }{
 	CreatorGroups:       "CreatorGroups",
 	SenderInvitations:   "SenderInvitations",
 	ReceiverInvitations: "ReceiverInvitations",
+	Schedules:           "Schedules",
 	UserGroups:          "UserGroups",
 }
 
@@ -117,6 +119,7 @@ type userR struct {
 	CreatorGroups       GroupSlice      `boil:"CreatorGroups" json:"CreatorGroups" toml:"CreatorGroups" yaml:"CreatorGroups"`
 	SenderInvitations   InvitationSlice `boil:"SenderInvitations" json:"SenderInvitations" toml:"SenderInvitations" yaml:"SenderInvitations"`
 	ReceiverInvitations InvitationSlice `boil:"ReceiverInvitations" json:"ReceiverInvitations" toml:"ReceiverInvitations" yaml:"ReceiverInvitations"`
+	Schedules           ScheduleSlice   `boil:"Schedules" json:"Schedules" toml:"Schedules" yaml:"Schedules"`
 	UserGroups          UserGroupSlice  `boil:"UserGroups" json:"UserGroups" toml:"UserGroups" yaml:"UserGroups"`
 }
 
@@ -473,6 +476,27 @@ func (o *User) ReceiverInvitations(mods ...qm.QueryMod) invitationQuery {
 	return query
 }
 
+// Schedules retrieves all the schedule's Schedules with an executor.
+func (o *User) Schedules(mods ...qm.QueryMod) scheduleQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`schedules`.`user_id`=?", o.ID),
+	)
+
+	query := Schedules(queryMods...)
+	queries.SetFrom(query.Query, "`schedules`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`schedules`.*"})
+	}
+
+	return query
+}
+
 // UserGroups retrieves all the user_group's UserGroups with an executor.
 func (o *User) UserGroups(mods ...qm.QueryMod) userGroupQuery {
 	var queryMods []qm.QueryMod
@@ -788,6 +812,104 @@ func (userL) LoadReceiverInvitations(ctx context.Context, e boil.ContextExecutor
 	return nil
 }
 
+// LoadSchedules allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadSchedules(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`schedules`),
+		qm.WhereIn(`schedules.user_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load schedules")
+	}
+
+	var resultSlice []*Schedule
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice schedules")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on schedules")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for schedules")
+	}
+
+	if len(scheduleAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Schedules = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &scheduleR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.Schedules = append(local.R.Schedules, foreign)
+				if foreign.R == nil {
+					foreign.R = &scheduleR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // LoadUserGroups allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (userL) LoadUserGroups(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
@@ -814,7 +936,7 @@ func (userL) LoadUserGroups(ctx context.Context, e boil.ContextExecutor, singula
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -872,7 +994,7 @@ func (userL) LoadUserGroups(ctx context.Context, e boil.ContextExecutor, singula
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.UserID) {
+			if local.ID == foreign.UserID {
 				local.R.UserGroups = append(local.R.UserGroups, foreign)
 				if foreign.R == nil {
 					foreign.R = &userGroupR{}
@@ -1045,23 +1167,23 @@ func (o *User) AddReceiverInvitations(ctx context.Context, exec boil.ContextExec
 	return nil
 }
 
-// AddUserGroups adds the given related objects to the existing relationships
+// AddSchedules adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
-// Appends related to o.R.UserGroups.
+// Appends related to o.R.Schedules.
 // Sets related.R.User appropriately.
-func (o *User) AddUserGroups(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserGroup) error {
+func (o *User) AddSchedules(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Schedule) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE `user_group` SET %s WHERE %s",
+				"UPDATE `schedules` SET %s WHERE %s",
 				strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
-				strmangle.WhereClause("`", "`", 0, userGroupPrimaryKeyColumns),
+				strmangle.WhereClause("`", "`", 0, schedulePrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -1074,7 +1196,60 @@ func (o *User) AddUserGroups(ctx context.Context, exec boil.ContextExecutor, ins
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			Schedules: related,
+		}
+	} else {
+		o.R.Schedules = append(o.R.Schedules, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &scheduleR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
+	return nil
+}
+
+// AddUserGroups adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.UserGroups.
+// Sets related.R.User appropriately.
+func (o *User) AddUserGroups(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserGroup) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `user_group` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
+				strmangle.WhereClause("`", "`", 0, userGroupPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.UserID, rel.GroupID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
 		}
 	}
 
@@ -1095,80 +1270,6 @@ func (o *User) AddUserGroups(ctx context.Context, exec boil.ContextExecutor, ins
 			rel.R.User = o
 		}
 	}
-	return nil
-}
-
-// SetUserGroups removes all previously related items of the
-// user replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.User's UserGroups accordingly.
-// Replaces o.R.UserGroups with related.
-// Sets related.R.User's UserGroups accordingly.
-func (o *User) SetUserGroups(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserGroup) error {
-	query := "update `user_group` set `user_id` = null where `user_id` = ?"
-	values := []interface{}{o.ID}
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, query)
-		fmt.Fprintln(writer, values)
-	}
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.UserGroups {
-			queries.SetScanner(&rel.UserID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.User = nil
-		}
-
-		o.R.UserGroups = nil
-	}
-	return o.AddUserGroups(ctx, exec, insert, related...)
-}
-
-// RemoveUserGroups relationships from objects passed in.
-// Removes related items from R.UserGroups (uses pointer comparison, removal does not keep order)
-// Sets related.R.User.
-func (o *User) RemoveUserGroups(ctx context.Context, exec boil.ContextExecutor, related ...*UserGroup) error {
-	if len(related) == 0 {
-		return nil
-	}
-
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.UserID, nil)
-		if rel.R != nil {
-			rel.R.User = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.UserGroups {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.UserGroups)
-			if ln > 1 && i < ln-1 {
-				o.R.UserGroups[i] = o.R.UserGroups[ln-1]
-			}
-			o.R.UserGroups = o.R.UserGroups[:ln-1]
-			break
-		}
-	}
-
 	return nil
 }
 
