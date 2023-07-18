@@ -113,8 +113,8 @@ type invitationL struct{}
 
 var (
 	invitationAllColumns            = []string{"id", "sender_id", "receiver_id", "group_id", "created_at", "updated_at"}
-	invitationColumnsWithoutDefault = []string{"sender_id", "receiver_id", "group_id", "created_at", "updated_at"}
-	invitationColumnsWithDefault    = []string{"id"}
+	invitationColumnsWithoutDefault = []string{"sender_id", "receiver_id", "group_id"}
+	invitationColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	invitationPrimaryKeyColumns     = []string{"id"}
 )
 

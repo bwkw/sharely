@@ -96,8 +96,8 @@ type userGroupL struct{}
 
 var (
 	userGroupAllColumns            = []string{"user_id", "group_id", "created_at", "updated_at"}
-	userGroupColumnsWithoutDefault = []string{"user_id", "group_id", "created_at", "updated_at"}
-	userGroupColumnsWithDefault    = []string{}
+	userGroupColumnsWithoutDefault = []string{"user_id", "group_id"}
+	userGroupColumnsWithDefault    = []string{"created_at", "updated_at"}
 	userGroupPrimaryKeyColumns     = []string{"user_id", "group_id"}
 )
 

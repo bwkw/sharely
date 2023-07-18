@@ -182,8 +182,8 @@ type scheduleL struct{}
 
 var (
 	scheduleAllColumns            = []string{"id", "title", "description", "start_datetime", "end_datetime", "is_repeated", "is_shared_to_gc", "color", "user_id", "group_id", "created_at", "updated_at"}
-	scheduleColumnsWithoutDefault = []string{"title", "description", "start_datetime", "end_datetime", "is_repeated", "is_shared_to_gc", "color", "user_id", "group_id", "created_at", "updated_at"}
-	scheduleColumnsWithDefault    = []string{"id"}
+	scheduleColumnsWithoutDefault = []string{"title", "description", "start_datetime", "end_datetime", "is_repeated", "is_shared_to_gc", "color", "user_id", "group_id"}
+	scheduleColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	schedulePrimaryKeyColumns     = []string{"id"}
 )
 

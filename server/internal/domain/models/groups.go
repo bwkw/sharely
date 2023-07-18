@@ -215,8 +215,8 @@ type groupL struct{}
 
 var (
 	groupAllColumns            = []string{"id", "name", "description", "image", "creator_id", "created_at", "updated_at"}
-	groupColumnsWithoutDefault = []string{"name", "description", "image", "creator_id", "created_at", "updated_at"}
-	groupColumnsWithDefault    = []string{"id"}
+	groupColumnsWithoutDefault = []string{"name", "description", "image", "creator_id"}
+	groupColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	groupPrimaryKeyColumns     = []string{"id"}
 )
 
