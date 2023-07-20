@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "calendar:testtest@/calendar")
+	db, err := sql.Open("mysql", "sharely:testtest@tcp(db:3306)/sharely")
 	if err != nil {
 		panic(err)
 	}
