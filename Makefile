@@ -8,5 +8,6 @@ db-seeder:
 	docker compose exec server goose -dir ./database/seeder mysql "sharely:testtest@tcp(db:3306)/sharely" up
 init:
 	docker compose up -d --build
+	sleep 3
 	make db-migration
 	make db-seeder
