@@ -1,0 +1,14 @@
+[mysql]
+  host       = "127.0.0.1"
+  port       = 3306
+  dbname     = "sharely"
+  user       = "sharely"
+  pass       = "testtest"
+  sslmode    = "false"
+  whitelist = [
+    "users",
+    "groups",
+    "user_group",
+    "schedules",
+    "invitations"
+  ]
