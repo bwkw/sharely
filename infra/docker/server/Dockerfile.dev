@@ -9,5 +9,6 @@ RUN go mod download
 COPY server/ .
 
 RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/pressly/goose/cmd/goose
 
 CMD ["air", "-c", ".air.toml"]
