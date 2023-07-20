@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 
 	"github.com/bwkw/sharely/internal/infrastructure/repository/rdb"
 	"github.com/bwkw/sharely/internal/interface/http/handler"
@@ -11,7 +13,13 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "sharely:testtest@tcp(db:3306)/sharely")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName))
 	if err != nil {
 		panic(err)
 	}

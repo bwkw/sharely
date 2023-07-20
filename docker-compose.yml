@@ -18,6 +18,12 @@ services:
       - type: bind
         source: ./server
         target: /server
+    environment:
+      DB_USER: sharely
+      DB_PASS: testtest
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: sharely
   db:
     container_name: db
     build:
