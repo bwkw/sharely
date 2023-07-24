@@ -4,20 +4,34 @@ volumes:
   db-store:
 
 services:
+  client:
+    container_name: client
+    build: 
+      context: .
+      dockerfile: infra/docker/client/Dockerfile.dev
+    volumes:
+      - type: bind
+        source: ./client
+        target: /client
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
   server:
     container_name: server
     build: 
       context: .
       dockerfile: infra/docker/server/Dockerfile.dev
+    volumes:
+      - type: bind
+        source: ./server
+        target: /server
     ports:
       - target: 8080
         published: 8080
         protocol: tcp
         mode: host
-    volumes:
-      - type: bind
-        source: ./server
-        target: /server
     environment:
       DB_USER: sharely
       DB_PASS: testtest
@@ -29,16 +43,16 @@ services:
     build:
       context: .
       dockerfile: infra/docker/db/Dockerfile.dev
-    ports:
-      - target: 3306
-        published: 3306
-        protocol: tcp
     volumes:
       - type: volume
         source: db-store
         target: /var/lib/mysql
         volume:
           nocopy: true
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
     environment:
       MYSQL_ROOT_PASSWORD: testtest
       MYSQL_DATABASE: sharely

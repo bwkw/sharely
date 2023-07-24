@@ -1,0 +1,14 @@
+# ログファイル
+*.log
+
+# Node.jsの依存関係ディレクトリ
+node_modules/
+
+# ビルド成果物
+.next/
+out/
+
+# エディタ関連
+.vscode/
+*.swp
+*.swo

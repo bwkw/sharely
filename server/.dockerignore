@@ -1,0 +1,16 @@
+# ログファイル
+*.log
+
+# Goの依存関係とビルドファイル
+vendor/
+*.exe
+*.exe~
+*.test
+*.test~
+*db
+*db~
+
+# エディタ関連
+.vscode/
+*.swp
+*.swo
