@@ -1,0 +1,10 @@
+FROM node:18.16.0-alpine
+
+WORKDIR /client
+
+COPY client/package* ./
+RUN yarn
+
+COPY client/ .
+
+CMD ["yarn", "dev"]
