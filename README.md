@@ -53,7 +53,7 @@ Calendar
 | created_at | datetime |  | レコードが作成された日時 |
 | updated_at | datetime |  | レコードが最後に更新された日時 |
 
-5. **schedule_google_calendar_syncsテーブル**
+5. **google_calendar_sync_statusesテーブル**
 
 | Column | Type | Constraints | Description |
 | --- | --- | --- | --- |
