@@ -25,8 +25,8 @@ INSERT INTO invitations(sender_id, receiver_id, group_id) VALUES
 (2, 1, 2);
 
 -- +goose Down
-DELETE FROM users;
-DELETE FROM `groups`;
-DELETE FROM user_group;
-DELETE FROM schedules;
 DELETE FROM invitations;
+DELETE FROM schedules;
+DELETE FROM user_group;
+DELETE FROM `groups`;
+DELETE FROM users;

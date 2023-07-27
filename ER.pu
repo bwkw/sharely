@@ -57,11 +57,24 @@ entity "invitations" {
   updated_at : datetime
 }
 
+entity "google_calendar_sync_statuses" {
+  + id : int [PK]
+  ---
+  user_id : int [FK users.id]
+  schedule_id : int [FK schedules.id]
+  is_synced_to_gc : boolean
+  last_synced_at : datetime
+  created_at : datetime
+  updated_at : datetime
+}
+
 users ||--o{ user_group
 users ||--o{ groups : creator
 groups ||--o{ user_group
 users ||--o{ schedules
 groups ||--o{ schedules
+users ||--o{ google_calendar_sync_statuses
+schedules ||--o{ google_calendar_sync_statuses
 users ||--o{ invitations : sender
 users ||--o{ invitations : receiver
 groups ||--o{ invitations
