@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TABLE google_calendar_sync_statuses(
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
   schedule_id INT NOT NULL,
   is_synced BOOLEAN NOT NULL,
