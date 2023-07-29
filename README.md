@@ -1,7 +1,7 @@
 ## What is
 Calendar
 
-## infra organization
+## infra configuration
 <div style="display: flex; justify-content: center; align-items: center; width: 80%; margin: 0 auto;">
     <img src="image/infra.png" alt="your image" style="width: 100%; height: auto;">
 </div>
@@ -11,7 +11,7 @@ Calendar
     <img src="image/er.png" alt="your image" style="width: 100%; height: auto;">
 </div>
 
-## DB organization
+## DB configuration
 1. **usersテーブル**
     
 | Column | Type | Constraints | Description |
