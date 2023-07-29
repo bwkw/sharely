@@ -1,0 +1,25 @@
+# ログファイル
+*.log
+
+# Node.jsの依存関係ディレクトリ
+node_modules
+
+# ビルドファイル
+dist
+build
+
+# バージョン管理システムのディレクトリ
+.git
+
+# 環境変数を保存するファイル
+.env
+
+# エディタやIDEの設定ファイル
+.vscode
+.idea
+*.swp
+*.swo
+
+# OSが自動的に生成するファイル
+.DS_Store
+Thumbs.db

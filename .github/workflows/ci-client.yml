@@ -1,0 +1,36 @@
+name: CI for Client
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - client/app/**
+
+jobs:
+  run-ci-for-client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Version
+        run: docker version
+
+      - name: Setup Node
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Docker Compose Build and Up
+        run: |
+          docker compose build
+          docker compose run client yarn
+          docker compose up -d
+
+      - name: Docker Compose Process
+        run: docker compose ps -a
+
+      - name: Next Format
+        run: docker compose exec -T client yarn lint

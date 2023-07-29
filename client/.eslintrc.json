@@ -1,3 +1,123 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:import/warnings",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "tsconfigRootDir": ".",
+    "project": true,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "react", "import", "unused-imports", "tailwindcss"],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "groups": [
+          "type",
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "object",
+          "index"
+        ],
+        "pathGroups": [
+          // type のインポートを最上部に配置、ただし @types/** からのインポートは外部インポートのあとに配置
+          {
+            "pattern": "@/types/**",
+            "group": "type",
+            "position": "after"
+          },
+          // @/ からインポートするファイルをグルーピング
+          {
+            "pattern": "{@/**}",
+            "group": "internal",
+            "position": "before"
+          },
+          // 非相対パスで記述した内部モジュールのコンポーネントを相対パスモジュールの直前に配置
+          {
+            "pattern": "{[A-Z]*,**/[A-Z]*}",
+            "group": "internal",
+            "position": "after"
+          },
+          // @@/ からインポートするファイルを一番最後に配置
+          {
+            "pattern": "@@/**",
+            "group": "index",
+            "position": "after"
+          }
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/newline-after-import": "error",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      },
+      {
+        "blankLine": "any",
+        "prev": "singleline-const",
+        "next": "return"
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        "allowString": true,
+        "allowNumber": true,
+        "allowNullableString": true,
+        "allowNullableNumber": true,
+        "allowNullableObject": true
+      }
+    ],
+    "@typescript-eslint/triple-slash-reference": [
+      "error",
+      {
+        "types": "always"
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/restrict-plus-operands": "error"
+  }
 }
