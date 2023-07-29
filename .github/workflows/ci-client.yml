@@ -1,13 +1,15 @@
-name: CI
+name: CI for Client
 
 on:
   pull_request:
     types:
       - opened
       - synchronize
+    paths:
+      - client/app/**
 
 jobs:
-  run-ci:
+  run-ci-for-client:
     runs-on: ubuntu-latest
 
     steps:
