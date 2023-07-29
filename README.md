@@ -1,7 +1,17 @@
 ## What is
 Calendar
 
-## DB structure
+## infra organization
+<div style="display: flex; justify-content: center; align-items: center; width: 80%; margin: 0 auto;">
+    <img src="image/infra.png" alt="your image" style="width: 100%; height: auto;">
+</div>
+
+## ER diagram
+<div style="display: flex; justify-content: center; align-items: center; width: 80%; margin: 0 auto;">
+    <img src="image/er.png" alt="your image" style="width: 100%; height: auto;">
+</div>
+
+## DB organization
 1. **usersテーブル**
     
 | Column | Type | Constraints | Description |
