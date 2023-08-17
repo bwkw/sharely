@@ -22,9 +22,8 @@ func NewGroupRepository(db *sql.DB) repository_interface.IGroupRepository {
 
 func (gr *GroupRepository) CreateGroup(ctx context.Context, group *models.Group) (models.Group, error) {
 	err := group.Insert(ctx, gr.DB, boil.Infer())
-    if err != nil {
-        log.Println("Error creating group:", err)
-    }
+	if err != nil {
+		log.Println("Error creating group:", err)
+	}
 	return *group, err
 }
-

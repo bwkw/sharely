@@ -30,11 +30,11 @@ func NewGroupUsecase(gr repository_interface.IGroupRepository) IGroupUsecase {
 }
 
 func (g *GroupUsecase) CreateGroup(ctx context.Context, group *CreateGroupDTO) (models.Group, error) {
-    groupEntity := &models.Group{
-        Name:        group.Name,
-        Description: null.StringFrom(group.Description),
-        Image:       null.StringFrom(group.Image),
-        CreatorID:   group.CreatorID,
-    }
-    return g.gr.CreateGroup(ctx, groupEntity)
+	groupEntity := &models.Group{
+		Name:        group.Name,
+		Description: null.StringFrom(group.Description),
+		Image:       null.StringFrom(group.Image),
+		CreatorID:   group.CreatorID,
+	}
+	return g.gr.CreateGroup(ctx, groupEntity)
 }

@@ -57,9 +57,9 @@ func makeTestRequest(e *echo.Echo, method, path string, body []byte) error {
 }
 
 func TestRequest(t *testing.T) {
-    e, err := setup()
-    require.NoError(t, err)
+	e, err := setup()
+	require.NoError(t, err)
 
-    err = makeTestRequest(e, "GET", "/api/groups", nil)
-    require.NoError(t, err)
+	err = makeTestRequest(e, "GET", "/api/groups", nil)
+	require.NoError(t, err)
 }
