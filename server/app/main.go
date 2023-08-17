@@ -26,11 +26,11 @@ func main() {
 
 	e := echo.New()
 
-	GROUP_BASE_URL := "api/groups"
+	GroupBaseURL := "api/groups"
 	gr := rdb.NewGroupRepository(db)
 	gu := usecase.NewGroupUsecase(gr)
 
-	handler.NewGroupHandler(e, gu, GROUP_BASE_URL)
+	handler.NewGroupHandler(e, gu, GroupBaseURL)
 
 	e.Logger.Info("Server is running at http://localhost:8080")
 	e.Logger.Fatal(e.Start(":8080"))

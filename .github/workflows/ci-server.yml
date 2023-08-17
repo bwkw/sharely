@@ -1,0 +1,45 @@
+name: CI for Server
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - server/app/**
+      - server/internal/**
+      - server/test/**
+
+jobs:
+  run-ci-for-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Version
+        run: docker version
+
+      - name: Build Go Docker Image
+        run: docker compose build server
+
+      - name: Start Go Docker Container
+        run: docker compose up -d server
+
+      - name: Docker Compose Process
+        run: docker compose ps -a
+
+      - name: Install goimports
+        run: docker compose exec -T server go install golang.org/x/tools/cmd/goimports
+
+      - name: Check goimports
+        run: docker compose exec -T server goimports -l .
+
+      - name: Run go vet
+        run: docker compose exec -T server go vet ./...
+
+      - name: Install staticcheck
+        run: docker compose exec -T server go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Run staticcheck
+        run: docker compose exec -T server staticcheck ./...

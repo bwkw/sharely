@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/bwkw/sharely/internal/domain/models"
-	"github.com/bwkw/sharely/internal/domain/repository_interface"
+	repositoryinterface "github.com/bwkw/sharely/internal/domain/repository_interface"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
@@ -14,7 +14,7 @@ type GroupRepository struct {
 	DB *sql.DB
 }
 
-func NewGroupRepository(db *sql.DB) repository_interface.IGroupRepository {
+func NewGroupRepository(db *sql.DB) repositoryinterface.IGroupRepository {
 	return &GroupRepository{
 		DB: db,
 	}
@@ -22,9 +22,8 @@ func NewGroupRepository(db *sql.DB) repository_interface.IGroupRepository {
 
 func (gr *GroupRepository) CreateGroup(ctx context.Context, group *models.Group) (models.Group, error) {
 	err := group.Insert(ctx, gr.DB, boil.Infer())
-    if err != nil {
-        log.Println("Error creating group:", err)
-    }
+	if err != nil {
+		log.Println("Error creating group:", err)
+	}
 	return *group, err
 }
-

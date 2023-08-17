@@ -24,11 +24,11 @@ func setup() (*echo.Echo, error) {
 
 	e := echo.New()
 
-	GROUP_BASE_URL := "api/groups"
+	GroupBaseURL := "api/groups"
 	gr := rdb.NewGroupRepository(db)
 	gu := usecase.NewGroupUsecase(gr)
 
-	handler.NewGroupHandler(e, gu, GROUP_BASE_URL)
+	handler.NewGroupHandler(e, gu, GroupBaseURL)
 
 	return e, nil
 }
@@ -49,17 +49,17 @@ func makeTestRequest(e *echo.Echo, method, path string, body []byte) error {
 	responseValidationInput := &openapi3filter.ResponseValidationInput{
 		RequestValidationInput: requestValidationInput,
 		Status:                 rec.Code,
-		Header:                 rec.HeaderMap,
-	}
+		Header:                 rec.Result().Header,
+	}	
 	responseValidationInput.SetBodyBytes(rec.Body.Bytes())
 
 	return openapi3filter.ValidateResponse(context.Background(), responseValidationInput)
 }
 
 func TestRequest(t *testing.T) {
-    e, err := setup()
-    require.NoError(t, err)
+	e, err := setup()
+	require.NoError(t, err)
 
-    err = makeTestRequest(e, "GET", "/api/groups", nil)
-    require.NoError(t, err)
+	err = makeTestRequest(e, "GET", "/api/groups", nil)
+	require.NoError(t, err)
 }

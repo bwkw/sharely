@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/bwkw/sharely/internal/domain/models"
-	"github.com/bwkw/sharely/internal/domain/repository_interface"
+	repositoryinterface "github.com/bwkw/sharely/internal/domain/repository_interface"
 	"github.com/volatiletech/null/v8"
 )
 
@@ -13,7 +13,7 @@ type IGroupUsecase interface {
 }
 
 type GroupUsecase struct {
-	gr repository_interface.IGroupRepository
+	gr repositoryinterface.IGroupRepository
 }
 
 type CreateGroupDTO struct {
@@ -23,18 +23,18 @@ type CreateGroupDTO struct {
 	CreatorID   int    `json:"creator_id"`
 }
 
-func NewGroupUsecase(gr repository_interface.IGroupRepository) IGroupUsecase {
+func NewGroupUsecase(gr repositoryinterface.IGroupRepository) IGroupUsecase {
 	return &GroupUsecase{
 		gr: gr,
 	}
 }
 
 func (g *GroupUsecase) CreateGroup(ctx context.Context, group *CreateGroupDTO) (models.Group, error) {
-    groupEntity := &models.Group{
-        Name:        group.Name,
-        Description: null.StringFrom(group.Description),
-        Image:       null.StringFrom(group.Image),
-        CreatorID:   group.CreatorID,
-    }
-    return g.gr.CreateGroup(ctx, groupEntity)
+	groupEntity := &models.Group{
+		Name:        group.Name,
+		Description: null.StringFrom(group.Description),
+		Image:       null.StringFrom(group.Image),
+		CreatorID:   group.CreatorID,
+	}
+	return g.gr.CreateGroup(ctx, groupEntity)
 }
