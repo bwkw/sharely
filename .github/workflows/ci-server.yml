@@ -1,0 +1,42 @@
+name: CI for Server
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - server/app/**
+      - server/internal/**
+      - server/test/**
+
+jobs:
+  run-ci-for-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Version
+        run: docker version
+
+      - name: Build Go Docker Image
+        run: docker compose build server
+
+      - name: Start Go Docker Container
+        run: docker compose up -d server
+
+      - name: Docker Compose Process
+        run: docker compose ps -a
+
+      - name: Check Go Imports
+        run: docker compose run server goimports -l .
+
+      - name: Run Go Vet
+        run: docker run go-container go vet ./...
+
+      - name: Run Staticcheck
+        run: docker run go-container staticcheck ./...
+
+      - name: Run Gocyclo
+        run: docker run go-container gocyclo -over 10 .
