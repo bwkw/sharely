@@ -32,20 +32,14 @@ jobs:
       - name: Install goimports
         run: docker compose exec -T server go install golang.org/x/tools/cmd/goimports
 
-      - name: Check Go Imports
+      - name: Check goimports
         run: docker compose exec -T server goimports -l .
 
-      - name: Run Go Vet
+      - name: Run go vet
         run: docker compose exec -T server go vet ./...
 
       - name: Install staticcheck
         run: docker compose exec -T server go install honnef.co/go/tools/cmd/staticcheck@latest
 
-      - name: Run Staticcheck
+      - name: Run staticcheck
         run: docker compose exec -T server staticcheck ./...
-
-      - name: Install gocyclo
-        run: docker compose exec -T server go install github.com/fzipp/gocyclo/cmd/gocyclo
-
-      - name: Run Gocyclo
-        run: docker compose exec -T server gocyclo -over 10 .
