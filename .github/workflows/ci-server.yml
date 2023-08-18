@@ -29,14 +29,23 @@ jobs:
       - name: Docker Compose Process
         run: docker compose ps -a
 
+      - name: Install goimports
+        run: docker compose exec -T server go install golang.org/x/tools/cmd/goimports
+
       - name: Check Go Imports
-        run: docker compose run server goimports -l .
+        run: docker compose exec -T server goimports -l .
 
       - name: Run Go Vet
-        run: docker run go-container go vet ./...
+        run: docker compose exec -T server go vet ./...
+
+      - name: Install staticcheck
+        run: docker compose exec -T server go install honnef.co/go/tools/cmd/staticcheck@latest
 
       - name: Run Staticcheck
-        run: docker run go-container staticcheck ./...
+        run: docker compose exec -T server staticcheck ./...
+
+      - name: Install gocyclo
+        run: docker compose exec -T server go install github.com/fzipp/gocyclo/cmd/gocyclo
 
       - name: Run Gocyclo
-        run: docker run go-container gocyclo -over 10 .
+        run: docker compose exec -T server gocyclo -over 10 .
