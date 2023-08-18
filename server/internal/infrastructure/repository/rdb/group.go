@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/bwkw/sharely/internal/domain/models"
-	"github.com/bwkw/sharely/internal/domain/repository_interface"
+	repositoryinterface "github.com/bwkw/sharely/internal/domain/repository_interface"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
@@ -14,7 +14,7 @@ type GroupRepository struct {
 	DB *sql.DB
 }
 
-func NewGroupRepository(db *sql.DB) repository_interface.IGroupRepository {
+func NewGroupRepository(db *sql.DB) repositoryinterface.IGroupRepository {
 	return &GroupRepository{
 		DB: db,
 	}

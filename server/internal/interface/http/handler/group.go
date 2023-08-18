@@ -19,7 +19,7 @@ func NewGroupHandler(e *echo.Echo, gu usecase.IGroupUsecase, baseURL string) {
 	}
 
 	e.POST(baseURL+"/", handler.CreateGroup)
-	e.POST(baseURL+"/:groupId/invitation", handler.PostGroupsGroupIdInvitation)
+	e.POST(baseURL+"/:groupId/invitation", handler.PostGroupsGroupIDInvitation)
 }
 
 type GroupResponse struct {
@@ -56,6 +56,6 @@ func (h *GroupHandler) CreateGroup(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-func (h *GroupHandler) PostGroupsGroupIdInvitation(ctx echo.Context) error {
+func (h *GroupHandler) PostGroupsGroupIDInvitation(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, nil)
 }

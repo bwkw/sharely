@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/bwkw/sharely/internal/domain/models"
-	"github.com/bwkw/sharely/internal/domain/repository_interface"
+	repositoryinterface "github.com/bwkw/sharely/internal/domain/repository_interface"
 	"github.com/volatiletech/null/v8"
 )
 
@@ -13,7 +13,7 @@ type IGroupUsecase interface {
 }
 
 type GroupUsecase struct {
-	gr repository_interface.IGroupRepository
+	gr repositoryinterface.IGroupRepository
 }
 
 type CreateGroupDTO struct {
@@ -23,7 +23,7 @@ type CreateGroupDTO struct {
 	CreatorID   int    `json:"creator_id"`
 }
 
-func NewGroupUsecase(gr repository_interface.IGroupRepository) IGroupUsecase {
+func NewGroupUsecase(gr repositoryinterface.IGroupRepository) IGroupUsecase {
 	return &GroupUsecase{
 		gr: gr,
 	}
