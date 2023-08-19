@@ -1,0 +1,67 @@
+name: Docker Security Scan
+
+on:
+  push:
+    paths:
+      - "infra/docker/**"
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Client Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: infra/docker/client
+          dockerfile: infra/docker/client/Dockerfile
+          push: false
+          tags: client:latest
+
+      - name: Run Trivy vulnerability scanner on Client
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "client:latest"
+          exit-code: "1"
+
+      - name: Run Dockle on Client
+        uses: goodwithtech/dockle-action@master
+        with:
+          image: "client:latest"
+          exit-code: "1"
+
+  server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Server Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: infra/docker/server
+          dockerfile: infra/docker/server/Dockerfile
+          push: false
+          tags: server:latest
+
+      - name: Run Trivy vulnerability scanner on Server
+        uses: aquasecurity/trivy-action@main
+        with:
+          image-ref: "server:latest"
+          exit-code: "1"
+
+      - name: Run Dockle on Server
+        uses: goodwithtech/dockle-action@main
+        with:
+          image: "server:latest"
+          exit-code: "1"
