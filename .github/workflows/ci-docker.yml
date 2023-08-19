@@ -25,7 +25,7 @@ jobs:
           tags: client:latest
 
       - name: Run Trivy vulnerability scanner on Client
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@main
         with:
           image-ref: "client:latest"
           exit-code: "1"
