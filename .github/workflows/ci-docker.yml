@@ -20,7 +20,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: infra/docker/client
-          dockerfile: infra/docker/client/Dockerfile
+          dockerfile: infra/docker/client/Dockerfile.dev
           push: false
           tags: client:latest
 
