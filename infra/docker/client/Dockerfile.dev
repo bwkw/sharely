@@ -7,5 +7,4 @@ RUN yarn
 
 COPY client/ .
 
-
 CMD ["yarn", "dev"]
