@@ -26,7 +26,7 @@ jobs:
           severity: "CRITICAL,HIGH"
 
       - name: Run Dockle on Client
-        uses: goodwithtech/dockle-action@master
+        uses: goodwithtech/dockle-action@main
         env:
           DOCKLE_HOST: "unix:///var/run/docker.sock"
         with:
