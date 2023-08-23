@@ -1,6 +1,10 @@
 FROM node:20-slim
 
+RUN adduser --disabled-password --gecos '' nonroot
+
 WORKDIR /client
+
+RUN chown -R nonroot:nonroot /client
 
 COPY client/package* ./
 RUN yarn
