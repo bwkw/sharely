@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@master
         with:
-          node-version: 18
+          node-version: 19
 
       - name: Docker Compose Build and Up
         run: |
