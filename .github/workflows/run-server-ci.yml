@@ -11,7 +11,7 @@ on:
       - server/test/**
 
 jobs:
-  run-ci-for-server:
+  run-server-ci:
     runs-on: ubuntu-latest
 
     steps:
