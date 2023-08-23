@@ -14,12 +14,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Docker Image
-        run: docker build -t client -f infra/docker/client/Dockerfile.dev .
+        run: docker build -t client:scan -f infra/docker/client/Dockerfile.dev .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "client:latest"
+          image-ref: "client:scan"
           format: "table"
           exit-code: "1"
           vuln-type: "os,library"
@@ -28,8 +28,9 @@ jobs:
       - name: Run Dockle on Client
         uses: goodwithtech/dockle-action@main
         with:
-          image: "client:latest"
-          format: "table"
+          image: "client:scan"
+          format: "json"
           exit-code: "1"
-          exit-level: "CRITICAL,HIGH"
+          exit-level: "warn"
           ignore: "CIS-DI-0010"
+          accept-key: "savedAptMark"
