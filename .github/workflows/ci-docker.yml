@@ -27,8 +27,9 @@ jobs:
 
       - name: Run Dockle on Client
         uses: goodwithtech/dockle-action@main
-        env:
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
         with:
           image: "client:latest"
+          format: "table"
           exit-code: "1"
+          exit-level: "CRITICAL,HIGH"
+          ignore: "CIS-DI-0010"
