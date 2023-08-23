@@ -3,7 +3,7 @@ name: Docker Security Scan
 on:
   push:
     paths:
-      - "infra/docker/**"
+      - "infra/docker/client/Dockerfile.dev"
 
 jobs:
   client:
