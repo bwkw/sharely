@@ -105,37 +105,3 @@ resource "aws_route_table_association" "pub_rt_associate_1c" {
   subnet_id      = aws_subnet.pub_1c.id
   route_table_id = aws_route_table.pub.id
 }
-
-# ---------------------------
-# Security Group
-# ---------------------------
-resource "aws_security_group" "ec2" {
-  name        = "${var.environment}-${var.app_name}-ec2-sg"
-  description = "For EC2"
-  vpc_id      = aws_vpc.main.id
-  tags = {
-    Name = "${var.environment}-${var.app_name}-ec2-sg"
-  }
-
-  # インバウンドルール
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = var.allow_ip_list
-  }
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = var.allow_ip_list
-  }
-
-  # アウトバウンドルール
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
