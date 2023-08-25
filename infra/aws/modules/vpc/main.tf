@@ -9,14 +9,65 @@ resource "aws_vpc" "main" {
 }
 
 # ---------------------------
-# Subnet
+# Subnets
 # ---------------------------
+
+# Public Subnets
 resource "aws_subnet" "pub_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pub_sub_1a_cidr
   availability_zone = var.availability_zone_a
+  map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment}-${var.app_name}-pub-1a-sub"
+  }
+}
+
+resource "aws_subnet" "pub_1b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.pub_sub_1b_cidr
+  availability_zone = var.availability_zone_b
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pub-1b-sub"
+  }
+}
+
+# Private Subnets for 1a
+resource "aws_subnet" "pri1_1a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.pri1_sub_1a_cidr
+  availability_zone = var.availability_zone_a
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri1-1a-sub"
+  }
+}
+
+resource "aws_subnet" "pri2_1a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.pri2_sub_1a_cidr
+  availability_zone = var.availability_zone_a
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri2-1a-sub"
+  }
+}
+
+# Private Subnets for 1b
+resource "aws_subnet" "pri1_1b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.pri1_sub_1b_cidr
+  availability_zone = var.availability_zone_b
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri1-1b-sub"
+  }
+}
+
+resource "aws_subnet" "pri2_1b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.pri2_sub_1b_cidr
+  availability_zone = var.availability_zone_b
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri2-1b-sub"
   }
 }
 
@@ -45,8 +96,13 @@ resource "aws_route_table" "pub" {
 }
 
 # SubnetとRoute tableの関連付け
-resource "aws_route_table_association" "pub_rt_associate" {
+resource "aws_route_table_association" "pub_rt_associate_1a" {
   subnet_id      = aws_subnet.pub_1a.id
+  route_table_id = aws_route_table.pub.id
+}
+
+resource "aws_route_table_association" "pub_rt_associate_1b" {
+  subnet_id      = aws_subnet.pub_1b.id
   route_table_id = aws_route_table.pub.id
 }
 
