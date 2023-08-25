@@ -23,13 +23,13 @@ resource "aws_subnet" "pub_1a" {
   }
 }
 
-resource "aws_subnet" "pub_1b" {
+resource "aws_subnet" "pub_1c" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pub_sub_1b_cidr
-  availability_zone = var.availability_zone_b
+  cidr_block        = var.pub_sub_1c_cidr
+  availability_zone = var.availability_zone_c
   map_public_ip_on_launch = true
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-1b-sub"
+    Name = "${var.environment}-${var.app_name}-pub-1c-sub"
   }
 }
 
@@ -52,22 +52,22 @@ resource "aws_subnet" "pri2_1a" {
   }
 }
 
-# Private Subnets for 1b
-resource "aws_subnet" "pri1_1b" {
+# Private Subnets for 1c
+resource "aws_subnet" "pri1_1c" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri1_sub_1b_cidr
-  availability_zone = var.availability_zone_b
+  cidr_block        = var.pri1_sub_1c_cidr
+  availability_zone = var.availability_zone_c
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri1-1b-sub"
+    Name = "${var.environment}-${var.app_name}-pri1-1c-sub"
   }
 }
 
-resource "aws_subnet" "pri2_1b" {
+resource "aws_subnet" "pri2_1c" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri2_sub_1b_cidr
-  availability_zone = var.availability_zone_b
+  cidr_block        = var.pri2_sub_1c_cidr
+  availability_zone = var.availability_zone_c
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri2-1b-sub"
+    Name = "${var.environment}-${var.app_name}-pri2-1c-sub"
   }
 }
 
@@ -101,8 +101,8 @@ resource "aws_route_table_association" "pub_rt_associate_1a" {
   route_table_id = aws_route_table.pub.id
 }
 
-resource "aws_route_table_association" "pub_rt_associate_1b" {
-  subnet_id      = aws_subnet.pub_1b.id
+resource "aws_route_table_association" "pub_rt_associate_1c" {
+  subnet_id      = aws_subnet.pub_1c.id
   route_table_id = aws_route_table.pub.id
 }
 

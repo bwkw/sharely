@@ -18,8 +18,8 @@ variable "availability_zone_a" {
   type        = string
 }
 
-variable "availability_zone_b" {
-  description = "Availability Zone for the 1b subnet"
+variable "availability_zone_c" {
+  description = "Availability Zone for the 1c subnet"
   type        = string
 }
 
@@ -28,8 +28,8 @@ variable "pub_sub_1a_cidr" {
   type        = string
 }
 
-variable "pub_sub_1b_cidr" {
-  description = "CIDR block for the public subnet in AZ 1b"
+variable "pub_sub_1c_cidr" {
+  description = "CIDR block for the public subnet in AZ 1c"
   type        = string
 }
 
@@ -43,13 +43,13 @@ variable "pri2_sub_1a_cidr" {
   type        = string
 }
 
-variable "pri1_sub_1b_cidr" {
-  description = "CIDR block for the first private subnet in AZ 1b"
+variable "pri1_sub_1c_cidr" {
+  description = "CIDR block for the first private subnet in AZ 1c"
   type        = string
 }
 
-variable "pri2_sub_1b_cidr" {
-  description = "CIDR block for the second private subnet in AZ 1b"
+variable "pri2_sub_1c_cidr" {
+  description = "CIDR block for the second private subnet in AZ 1c"
   type        = string
 }
 
