@@ -22,7 +22,7 @@ jobs:
       - name: Build Docker Image using Buildx
         run: |
           docker buildx create --use
-          docker buildx build -t client:scan -f infra/docker/client/Dockerfile.dev .
+          docker buildx build --load -t client:scan -f infra/docker/client/Dockerfile.dev .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master

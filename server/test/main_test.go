@@ -63,4 +63,3 @@ func TestRequest(t *testing.T) {
 	err = makeTestRequest(e, "GET", "/api/groups", nil)
 	require.NoError(t, err)
 }
-
