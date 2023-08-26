@@ -34,7 +34,7 @@ jobs:
 
       - name: Start Client Docker Container
         run: |
-          docker run -d --name client_container -d client:latest
+          docker run -d --name client_container client:latest
           docker exec client_container yarn
 
       - name: Docker Process
