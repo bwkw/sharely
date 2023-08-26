@@ -30,8 +30,7 @@ jobs:
       - name: Build Client Docker Image using Buildx
         run: |
           docker buildx create --use
-          docker buildx build --load -t client:latest client/app/Dockerfile
-
+          docker buildx build --load -t client:latest -f infra/docker/client/Dockerfile.dev .
       - name: Start Client Docker Container
         run: |
           docker run --name client_container -d client:latest
