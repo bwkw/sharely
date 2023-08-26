@@ -24,14 +24,21 @@ jobs:
         with:
           node-version: 19
 
-      - name: Docker Compose Build and Up
-        run: |
-          docker compose build client
-          docker compose run client yarn
-          docker compose up -d client
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Docker Compose Process
-        run: docker compose ps -a
+      - name: Build Client Docker Image using Buildx
+        run: |
+          docker buildx create --use
+          docker buildx build --load -t client:latest client/app/Dockerfile
+
+      - name: Start Client Docker Container
+        run: |
+          docker run --name client_container -d client:latest
+          docker exec client_container yarn
+
+      - name: Docker Process
+        run: docker ps -a
 
       - name: Next Format
-        run: docker compose exec -T client yarn lint
+        run: docker exec client_container yarn lint
