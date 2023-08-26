@@ -9,6 +9,7 @@ on:
       - server/app/**
       - server/internal/**
       - server/test/**
+  workflow_dispatch:
 
 jobs:
   run-server-ci:
