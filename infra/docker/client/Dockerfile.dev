@@ -13,3 +13,4 @@ COPY client/ .
 
 USER nonroot
 CMD ["yarn", "dev"]
+
