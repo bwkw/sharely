@@ -16,8 +16,13 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v3
 
-      - name: Build Docker Image
-        run: docker build -t client:scan -f infra/docker/client/Dockerfile.dev .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image using Buildx
+        run: |
+          docker buildx create --use
+          docker buildx build --load -t client:scan -f infra/docker/client/Dockerfile.dev .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
