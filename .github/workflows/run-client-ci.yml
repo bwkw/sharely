@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@master
         with:
-          node-version: 19
+          node-version: 20
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -31,9 +31,10 @@ jobs:
         run: |
           docker buildx create --use
           docker buildx build --load -t client:latest -f infra/docker/client/Dockerfile.dev .
+
       - name: Start Client Docker Container
         run: |
-          docker run --name client_container -d client:latest
+          docker run -d --name client_container -d client:latest
           docker exec client_container yarn
 
       - name: Docker Process
