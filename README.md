@@ -108,6 +108,8 @@ $ docker compose up -d --build
 
 ## Supplement
 
+### infra
+
 - Format tf file
 
 ```
@@ -118,6 +120,12 @@ terraform fmt
 
 ```
 terraform validate
+```
+
+- Create Terraform document
+
+```
+terraform-docs markdown table --output-file README.md .
 ```
 
 - Check what will be created
