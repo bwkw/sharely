@@ -14,9 +14,9 @@ resource "aws_vpc" "main" {
 
 # Public Subnets
 resource "aws_subnet" "pub_1a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pub_sub_1a_cidr
-  availability_zone = var.availability_zone_a
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.pub_sub_1a_cidr
+  availability_zone       = var.availability_zone_a
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment}-${var.app_name}-pub-1a-sub"
@@ -24,9 +24,9 @@ resource "aws_subnet" "pub_1a" {
 }
 
 resource "aws_subnet" "pub_1c" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pub_sub_1c_cidr
-  availability_zone = var.availability_zone_c
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.pub_sub_1c_cidr
+  availability_zone       = var.availability_zone_c
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment}-${var.app_name}-pub-1c-sub"
