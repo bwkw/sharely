@@ -4,7 +4,10 @@ repos:
     rev: v1.74.1
     hooks:
       - id: terraform_fmt
+        files: ^(infra/aws/environments/stg/|infra/aws/modules/).*\.tf$
       - id: terraform_validate
+        files: ^(infra/aws/environments/stg/|infra/aws/modules/).*\.tf$
       - id: terraform_docs
+        files: ^(infra/aws/environments/stg/|infra/aws/modules/).*\.tf$
       # - id: terraform_tflint
       # - id: terraform_tfsec

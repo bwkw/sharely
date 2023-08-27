@@ -106,6 +106,22 @@ $ docker compose up -d --build
 (~/infra/aws/environments/stg) ln -s provider.tf ../../provider.tf
 ```
 
+2. Create S3 bucket for terraform backend
+
+```
+aws s3api create-bucket --bucket sharely-terraform-state-bucket --region ap-northeast-1 --create-bucket-configuration LocationConstraint=ap-northeast-1
+```
+
+3. Create Dynamo DB for terraform backend rock
+
+```
+aws dynamodb create-table --table-name sharely-terraform-up-and-running-locks \
+  --attribute-definitions AttributeName=LockID,AttributeType=S \
+  --key-schema AttributeName=LockID,KeyType=HASH \
+  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+  --region ap-northeast-1
+```
+
 ## Supplement
 
 ### infra
