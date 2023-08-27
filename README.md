@@ -122,6 +122,24 @@ aws dynamodb create-table --table-name sharely-terraform-up-and-running-locks \
   --region ap-northeast-1
 ```
 
+4. Terraform init
+
+```
+(~/infra/aws/environments/stg) terraform init
+```
+
+5. Encrypt s3 bucket
+
+```
+aws s3api put-bucket-encryption --bucket sharely-terraform-state-bucket --server-side-encryption-configuration '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
+```
+
+6. Set Versioning to s3 bucket
+
+```
+aws s3api put-bucket-versioning --bucket sharely-terraform-state-bucket --versioning-configuration Status=Enabled
+```
+
 ## Supplement
 
 ### infra
