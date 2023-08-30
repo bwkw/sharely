@@ -5,6 +5,14 @@ resource "aws_secretsmanager_secret" "aurora_credentials" {
     Environment = var.environment
     Application = var.app_name
   }
+
+#   普通に消してしまうと復元待機期間に引っかかってしまうので消さないように
+#   lifecycle {
+#     prevent_destroy = true
+#   }
+
+#   消したい場合は、復元待機期間を無視するように
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "aurora_credentials_version" {
