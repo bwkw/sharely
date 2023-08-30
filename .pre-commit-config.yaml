@@ -8,6 +8,6 @@ repos:
       - id: terraform_validate
         files: ^(infra/aws/environments/stg/).*\.tf$
       - id: terraform_docs
-        files: ^(infra/aws/modules/).*\.md$
+        files: ^(infra/aws/modules/).*\.tf$
       # - id: terraform_tflint
       # - id: terraform_tfsec
