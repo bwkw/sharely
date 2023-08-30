@@ -10,6 +10,12 @@ variable "app_name" {
   default     = "sharely"
 }
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "ap-northeast-1"
+}
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string

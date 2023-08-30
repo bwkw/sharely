@@ -24,6 +24,20 @@ module "secrets_manager" {
 
   environment = var.environment
   app_name    = var.app_name
+
   db_username = var.db_username
   db_password = var.db_password
+}
+
+module "vpc_endpoint" {
+  source = "../../modules/vpc-endpoint"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  region             = var.region
+  vpc_id             = module.vpc.vpc_id
+  subnet_pri2_1a_id  = module.vpc.subnet_pri2_1a_id
+  subnet_pri2_1c_id  = module.vpc.subnet_pri2_1c_id
+  security_group_ids = [module.vpc.aurora_vpc_endpoint_sg_id]
 }
