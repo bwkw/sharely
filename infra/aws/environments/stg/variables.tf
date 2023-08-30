@@ -43,5 +43,18 @@ variable "pri2_sub_1c_cidr" {
 }
 
 variable "allow_ip_list" {
-  default = ["0.0.0.0/0"]
+  description = "List of allowed IPs for security group ingress"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "db_username" {
+  description = "The database username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "The database password"
+  type        = string
+  sensitive   = true
 }
