@@ -171,11 +171,11 @@ terraform plan
 - Create resource
 
 ```
-AWS_PROFILE=sharely terraform apply
+AWS_PROFILE=sharely terraform apply -var-file="stg.tfvars"
 ```
 
 - Delete resource
 
 ```
-AWS_PROFILE=sharely terraform destroy
+AWS_PROFILE=sharely terraform destroy -var-file="stg.tfvars"
 ```
