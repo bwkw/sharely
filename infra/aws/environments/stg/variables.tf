@@ -86,3 +86,9 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "instance_class" {
+  description = "The instance type of the RDS instance"
+  type        = string
+  default     = "db.t4g.medium"
+}
