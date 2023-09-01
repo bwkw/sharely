@@ -3,6 +3,10 @@ init:
 	sleep 3
 	make db-migration
 	make db-seeder
+up:
+	docker compose up -d
+down:
+	docker compose down --remove-orphans
 db:
 	docker compose exec db mysql -u sharely -D sharely -p
 db-migration:
