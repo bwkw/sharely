@@ -32,3 +32,8 @@ output "subnet_pri2_1c_id" {
   value       = aws_subnet.pri2_1c.id
   description = "ID of the second created private subnet in AZ 1c"
 }
+
+output "aurora_vpc_endpoint_sg_id" {
+  description = "The ID of the security group for Aurora and VPC Endpoint"
+  value       = aws_security_group.aurora_and_vpc_endpoint_sg.id
+}
