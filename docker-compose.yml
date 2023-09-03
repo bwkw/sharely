@@ -7,8 +7,8 @@ services:
   client:
     container_name: client
     build: 
-      context: .
-      dockerfile: infra/docker/client/Dockerfile.dev
+      context: ./client
+      dockerfile: ../infra/docker/client/Dockerfile.dev
     volumes:
       - type: bind
         source: ./client
@@ -21,8 +21,8 @@ services:
   server:
     container_name: server
     build: 
-      context: .
-      dockerfile: infra/docker/server/Dockerfile.dev
+      context: ./server
+      dockerfile: ../infra/docker/server/Dockerfile.dev
     volumes:
       - type: bind
         source: ./server
@@ -41,8 +41,8 @@ services:
   db:
     container_name: db
     build:
-      context: .
-      dockerfile: infra/docker/db/Dockerfile.dev
+      context: ./infra/docker/db
+      dockerfile: Dockerfile.dev
     volumes:
       - type: volume
         source: db-store

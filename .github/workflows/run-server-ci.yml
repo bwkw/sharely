@@ -27,7 +27,7 @@ jobs:
       - name: Build Go Docker Image using Buildx
         run: |
           docker buildx create --use
-          docker buildx build --load -t server:latest -f infra/docker/server/Dockerfile.dev .
+          docker buildx build --load -t server:latest -f infra/docker/server/Dockerfile.dev ./server
 
       - name: Start Go Docker Container
         run: docker run -d --name server_container server:latest
