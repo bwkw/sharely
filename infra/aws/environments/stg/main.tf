@@ -59,3 +59,9 @@ module "aurora" {
   db_username    = var.db_username
   db_password    = var.db_password
 }
+
+module "ecr" {
+  source = "../../modules/ecr"
+
+  environment = var.environment
+}
