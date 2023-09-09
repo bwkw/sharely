@@ -44,6 +44,12 @@ resource "aws_ecs_service" "next_js" {
     security_groups  = [var.next_js_ecs_tasks_sg_id]
     assign_public_ip = true
   }
+
+  load_balancer {
+    target_group_arn = var.pub_alb_tg_arn
+    container_name   = "${var.environment}-${var.app_name}-next-js-container"
+    container_port   = 80 
+  }
 }
 
 # Next.js タスク定義

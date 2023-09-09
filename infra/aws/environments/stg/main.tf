@@ -91,6 +91,8 @@ module "ecs" {
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url
 
+  pub_alb_tg_arn = module.alb.pub_alb_tg_arn
+
   desired_count             = var.desired_count
   task_cpu                  = var.task_cpu
   task_memory               = var.task_memory
