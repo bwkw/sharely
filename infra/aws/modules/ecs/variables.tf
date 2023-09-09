@@ -1,11 +1,16 @@
-variable "cluster_name" {
-  description = "Name of the ECS cluster"
+variable "environment" {
+  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
   type        = string
 }
 
-variable "task_family" {
-  description = "Name of the task definition family"
+variable "app_name" {
+  description = "Name of the application"
   type        = string
+}
+
+variable "desired_count" {
+  description = "The desired number of instantiations of the specified task definition to keep running on the service"
+  type        = number
 }
 
 variable "task_cpu" {
@@ -18,17 +23,32 @@ variable "task_memory" {
   type        = string
 }
 
-variable "ecs_execution_role_arn" {
-  description = "The ARN of the ECS execution role"
+variable "subnets_next_js" {
+  description = "List of subnet IDs for deploying the Next.js application in ECS"
+  type        = list(string)
+}
+
+variable "subnets_go" {
+  description = "List of subnet IDs for deploying the Go application in ECS"
+  type        = list(string)
+}
+
+variable "next_js_ecs_tasks_sg_id" {
+  description = "The ID of the security group for Next.js ECS Tasks"
   type        = string
 }
 
-variable "container_name" {
-  description = "Name of the container"
+variable "go_ecs_tasks_sg_id" {
+  description = "The ID of the security group for Go ECS Tasks"
   type        = string
 }
 
-variable "container_image" {
-  description = "Image of the container"
+variable "next_js_image_url" {
+  description = "ECR URL for the Next.js application"
+  type        = string
+}
+
+variable "go_image_url" {
+  description = "ECR URL for the Go application"
   type        = string
 }

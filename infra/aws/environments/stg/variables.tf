@@ -92,3 +92,21 @@ variable "instance_class" {
   type        = string
   default     = "db.t4g.medium"
 }
+
+variable "desired_count" {
+  description = "The desired number of tasks for the ECS service"
+  type        = number
+  default     = 2
+}
+
+variable "task_cpu" {
+  description = "The amount of CPU to allocate to the task"
+  type        = string
+  default     = "256" # 0.25 vCPU
+}
+
+variable "task_memory" {
+  description = "The amount of memory to allocate to the task"
+  type        = string
+  default     = "512"
+}

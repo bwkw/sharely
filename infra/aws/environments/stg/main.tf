@@ -65,3 +65,22 @@ module "ecr" {
 
   environment = var.environment
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  subnets_next_js         = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
+  subnets_go              = [module.vpc.subnet_pri2_1a_id, module.vpc.subnet_pri2_1c_id]
+  next_js_ecs_tasks_sg_id = module.vpc.next_js_ecs_tasks_sg_id
+  go_ecs_tasks_sg_id      = module.vpc.go_ecs_tasks_sg_id
+
+  next_js_image_url = module.ecr.next_js_repository_url
+  go_image_url      = module.ecr.go_repository_url
+
+  desired_count = var.desired_count
+  task_cpu      = var.task_cpu
+  task_memory   = var.task_memory
+}
