@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-vpc"
+    Name = "${var.app_name}-${var.environment}-vpc"
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "pub_1a" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-1a-sub"
+    Name = "${var.app_name}-${var.environment}-pub-1a-sub"
   }
 }
 
@@ -34,7 +34,7 @@ resource "aws_subnet" "pub_1c" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-1c-sub"
+    Name = "${var.app_name}-${var.environment}-pub-1c-sub"
   }
 }
 
@@ -45,7 +45,7 @@ resource "aws_subnet" "pri1_1a" {
   availability_zone = var.availability_zone_a
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri1-1a-sub"
+    Name = "${var.app_name}-${var.environment}-pri1-1a-sub"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_subnet" "pri2_1a" {
   availability_zone = var.availability_zone_a
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri2-1a-sub"
+    Name = "${var.app_name}-${var.environment}-pri2-1a-sub"
   }
 }
 
@@ -66,7 +66,7 @@ resource "aws_subnet" "pri1_1c" {
   availability_zone = var.availability_zone_c
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri1-1c-sub"
+    Name = "${var.app_name}-${var.environment}-pri1-1c-sub"
   }
 }
 
@@ -76,7 +76,7 @@ resource "aws_subnet" "pri2_1c" {
   availability_zone = var.availability_zone_c
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri2-1c-sub"
+    Name = "${var.app_name}-${var.environment}-pri2-1c-sub"
   }
 }
 
@@ -87,7 +87,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-igw"
+    Name = "${var.app_name}-${var.environment}-igw"
   }
 }
 
@@ -102,7 +102,7 @@ resource "aws_route_table" "pub" {
   }
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-rt"
+    Name = "${var.app_name}-${var.environment}-pub-rt"
   }
 }
 
@@ -122,7 +122,7 @@ resource "aws_route_table" "pri" {
   vpc_id = aws_vpc.main.id
   
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri-rt"
+    Name = "${var.app_name}-${var.environment}-pri-rt"
   }
 }
 
@@ -149,12 +149,12 @@ resource "aws_route_table_association" "pri2_rt_associate_1c" {
 
 # パブリックALBのセキュリティグループ
 resource "aws_security_group" "pub_alb" {
-  name        = "${var.environment}-${var.app_name}-pub-alb-sg"
+  name        = "${var.app_name}-${var.environment}-pub-alb-sg"
   description = "Security Group for Public ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-alb-sg"
+    Name = "${var.app_name}-${var.environment}-pub-alb-sg"
   }
 }
 
@@ -200,12 +200,12 @@ resource "aws_security_group_rule" "pub_alb_egress_https" {
 
 # Next.jsコンテナのセキュリティグループ
 resource "aws_security_group" "next_js_ecs_tasks" {
-  name        = "${var.environment}-${var.app_name}-next-js-ecs-tasks-sg"
+  name        = "${var.app_name}-${var.environment}-next-js-ecs-tasks-sg"
   description = "Security Group for Next.js ECS Tasks"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-next-js-ecs-tasks-sg"
+    Name = "${var.app_name}-${var.environment}-next-js-ecs-tasks-sg"
   }
 }
 
@@ -251,12 +251,12 @@ resource "aws_security_group_rule" "next_js_ecs_egress_https" {
 
 # プライベートALBのセキュリティグループ
 resource "aws_security_group" "pri_alb" {
-  name        = "${var.environment}-${var.app_name}-pri-alb-sg"
+  name        = "${var.app_name}-${var.environment}-pri-alb-sg"
   description = "Security Group for Private ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pri-alb-sg"
+    Name = "${var.app_name}-${var.environment}-pri-alb-sg"
   }
 }
 
@@ -302,12 +302,12 @@ resource "aws_security_group_rule" "pri_alb_egress_https" {
 
 # Goコンテナのセキュリティグループ
 resource "aws_security_group" "go_ecs_tasks" {
-  name        = "${var.environment}-${var.app_name}-go-ecs-tasks-sg"
+  name        = "${var.app_name}-${var.environment}-go-ecs-tasks-sg"
   description = "Security Group for Go ECS Tasks"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-go-ecs-tasks-sg"
+    Name = "${var.app_name}-${var.environment}-go-ecs-tasks-sg"
   }
 }
 
@@ -344,12 +344,12 @@ resource "aws_security_group_rule" "go_ecs_egress" {
 
 # Auroraのセキュリティグループ
 resource "aws_security_group" "aurora" {
-  name        = "${var.environment}-${var.app_name}-aurora-sg"
+  name        = "${var.app_name}-${var.environment}-aurora-sg"
   description = "Security Group for both Aurora"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-aurora-sg"
+    Name = "${var.app_name}-${var.environment}-aurora-sg"
   }
 }
 

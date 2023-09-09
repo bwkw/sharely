@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "aurora_credentials" {
-  name = "${var.environment}-${var.app_name}-aurora-credentials"
+  name = "${var.app_name}-${var.environment}-aurora-credentials"
 
   tags = {
     Environment = var.environment

@@ -1,5 +1,5 @@
 resource "aws_lb" "pub_alb" {
-  name               = "${var.environment}-${var.app_name}-pub-alb"
+  name               = "${var.app_name}-${var.environment}-pub-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = var.pub_alb_sg_id
@@ -8,7 +8,7 @@ resource "aws_lb" "pub_alb" {
   enable_deletion_protection = false
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-pub-alb"
+    Name = "${var.app_name}-${var.environment}-pub-alb"
   }
 }
 

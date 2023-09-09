@@ -2,9 +2,9 @@
 # Aurora RDS Cluster
 # ---------------------------
 resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier      = "${var.environment}-${var.app_name}-aurora-cluster"
+  cluster_identifier      = "${var.app_name}-${var.environment}-aurora-cluster"
   engine                  = "aurora-mysql"
-  database_name           = "${var.environment}${var.app_name}"
+  database_name           = "${var.app_name}${var.environment}"
   master_username         = var.db_username
   master_password         = var.db_password
   backup_retention_period = 5
@@ -16,7 +16,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance_1a" {
-  identifier         = "${var.environment}-${var.app_name}-aurora-instance-1a"
+  identifier         = "${var.app_name}-${var.environment}-aurora-instance-1a"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
   availability_zone  = var.availability_zone_a
@@ -24,7 +24,7 @@ resource "aws_rds_cluster_instance" "aurora_instance_1a" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance_1c" {
-  identifier         = "${var.environment}-${var.app_name}-aurora-instance-1c"
+  identifier         = "${var.app_name}-${var.environment}-aurora-instance-1c"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
   availability_zone  = var.availability_zone_c
@@ -35,13 +35,13 @@ resource "aws_rds_cluster_instance" "aurora_instance_1c" {
 # DB Subnet Group
 # ---------------------------
 resource "aws_db_subnet_group" "aurora" {
-  name       = "${var.environment}-${var.app_name}-aurora-subnet-group"
+  name       = "${var.app_name}-${var.environment}-aurora-subnet-group"
   subnet_ids = [
     var.subnet_pri2_1a_id,
     var.subnet_pri2_1c_id
   ]
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-aurora-subnet-group"
+    Name = "${var.app_name}-${var.environment}-aurora-subnet-group"
   }
 }

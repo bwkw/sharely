@@ -1,11 +1,11 @@
 # 共通のクラスタ
 resource "aws_ecs_cluster" "main" {
-  name = "${var.environment}-${var.app_name}-cluster"
+  name = "${var.app_name}-${var.environment}-cluster"
 }
 
 # ECS実行ロール
 resource "aws_iam_role" "ecs_execution_role" {
-  name               = "${var.environment}-${var.app_name}-ecs-execution-role"
+  name               = "${var.app_name}-${var.environment}-ecs-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -47,7 +47,7 @@ resource "aws_ecs_service" "next_js" {
 
   load_balancer {
     target_group_arn = var.pub_alb_tg_arn
-    container_name   = "${var.environment}-${var.app_name}-next-js-container"
+    container_name   = "${var.app_name}-${var.environment}-next-js-container"
     container_port   = 80 
   }
 }
@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "next_js" {
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
 
   container_definitions = jsonencode([{
-    name  = "${var.environment}-${var.app_name}-next-js-container"
+    name  = "${var.app_name}-${var.environment}-next-js-container"
     image = var.next_js_image_url
   }])
 }
@@ -119,7 +119,7 @@ resource "aws_ecs_task_definition" "go" {
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
 
   container_definitions = jsonencode([{
-    name  = "${var.environment}-${var.app_name}-go-container"
+    name  = "${var.app_name}-${var.environment}-go-container"
     image = var.go_image_url
   }])
 }

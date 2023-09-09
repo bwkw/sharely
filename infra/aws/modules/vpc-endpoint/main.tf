@@ -13,6 +13,6 @@ resource "aws_vpc_endpoint" "aurora" {
   private_dns_enabled = true
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-aurora-vpc-endpoint"
+    Name = "${var.app_name}-${var.environment}-aurora-vpc-endpoint"
   }
 }
