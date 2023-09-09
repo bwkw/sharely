@@ -117,15 +117,13 @@ resource "aws_route_table_association" "pub_rt_associate_1c" {
   route_table_id = aws_route_table.pub.id
 }
 
-# ---------------------------
-# Security Group for VPC Endpoint and Aurora
-# ---------------------------
-resource "aws_security_group" "aurora_and_vpc_endpoint_sg" {
-  name        = "${var.environment}-${var.app_name}-aurora-vpc-endpoint-sg"
-  description = "Security Group for both Aurora and VPC Endpoint"
+# Auroraのセキュリティグループ
+resource "aws_security_group" "aurora" {
+  name        = "${var.environment}-${var.app_name}-aurora-sg"
+  description = "Security Group for both Aurora"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-${var.app_name}-aurora-vpc-endpoint-sg"
+    Name = "${var.environment}-${var.app_name}-aurora-sg"
   }
 }
