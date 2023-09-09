@@ -158,7 +158,17 @@ resource "aws_security_group" "pub_alb" {
   }
 }
 
-resource "aws_security_group_rule" "pub_alb_ingress" {
+resource "aws_security_group_rule" "pub_alb_ingress_http" {
+  security_group_id = aws_security_group.pub_alb.id
+
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "pub_alb_ingress_https" {
   security_group_id = aws_security_group.pub_alb.id
 
   type        = "ingress"
@@ -168,7 +178,17 @@ resource "aws_security_group_rule" "pub_alb_ingress" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
-resource "aws_security_group_rule" "pub_alb_egress" {
+resource "aws_security_group_rule" "pub_alb_egress_http" {
+  security_group_id = aws_security_group.pub_alb.id
+
+  type        = "egress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "pub_alb_egress_https" {
   security_group_id = aws_security_group.pub_alb.id
 
   type        = "egress"
@@ -189,7 +209,17 @@ resource "aws_security_group" "next_js_ecs_tasks" {
   }
 }
 
-resource "aws_security_group_rule" "next_js_ecs_ingress_from_alb" {
+resource "aws_security_group_rule" "next_js_ecs_ingress_http" {
+  security_group_id = aws_security_group.next_js_ecs_tasks.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.pub_alb.id
+}
+
+resource "aws_security_group_rule" "next_js_ecs_ingress_https" {
   security_group_id = aws_security_group.next_js_ecs_tasks.id
 
   type                     = "ingress"
@@ -199,7 +229,17 @@ resource "aws_security_group_rule" "next_js_ecs_ingress_from_alb" {
   source_security_group_id = aws_security_group.pub_alb.id
 }
 
-resource "aws_security_group_rule" "next_js_ecs_egress" {
+resource "aws_security_group_rule" "next_js_ecs_egress_http" {
+  security_group_id = aws_security_group.next_js_ecs_tasks.id
+
+  type        = "egress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  source_security_group_id = aws_security_group.pri_alb.id
+}
+
+resource "aws_security_group_rule" "next_js_ecs_egress_https" {
   security_group_id = aws_security_group.next_js_ecs_tasks.id
 
   type        = "egress"
@@ -220,7 +260,17 @@ resource "aws_security_group" "pri_alb" {
   }
 }
 
-resource "aws_security_group_rule" "pri_alb_ingress_from_nextjs" {
+resource "aws_security_group_rule" "pri_alb_ingress_http" {
+  security_group_id = aws_security_group.pri_alb.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "pri_alb_ingress_https" {
   security_group_id = aws_security_group.pri_alb.id
 
   type                     = "ingress"
@@ -230,7 +280,17 @@ resource "aws_security_group_rule" "pri_alb_ingress_from_nextjs" {
   source_security_group_id = aws_security_group.next_js_ecs_tasks.id
 }
 
-resource "aws_security_group_rule" "pri_alb_egress" {
+resource "aws_security_group_rule" "pri_alb_egress_http" {
+  security_group_id = aws_security_group.pri_alb.id
+
+  type        = "egress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  source_security_group_id = aws_security_group.go_ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "pri_alb_egress_https" {
   security_group_id = aws_security_group.pri_alb.id
 
   type        = "egress"
@@ -251,7 +311,17 @@ resource "aws_security_group" "go_ecs_tasks" {
   }
 }
 
-resource "aws_security_group_rule" "go_ecs_ingress_from_alb" {
+resource "aws_security_group_rule" "go_ecs_ingress_http" {
+  security_group_id = aws_security_group.go_ecs_tasks.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.pri_alb.id
+}
+
+resource "aws_security_group_rule" "go_ecs_ingress_https" {
   security_group_id = aws_security_group.go_ecs_tasks.id
 
   type                     = "ingress"
@@ -283,7 +353,7 @@ resource "aws_security_group" "aurora" {
   }
 }
 
-resource "aws_security_group_rule" "aurora_ingress_from_go_ecs" {
+resource "aws_security_group_rule" "aurora_ingress" {
   security_group_id = aws_security_group.aurora.id
 
   type                     = "ingress"
