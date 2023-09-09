@@ -18,14 +18,14 @@ output "subnet_pri1_1a_id" {
   description = "ID of the first created private subnet in AZ 1a"
 }
 
-output "subnet_pri2_1a_id" {
-  value       = aws_subnet.pri2_1a.id
-  description = "ID of the second created private subnet in AZ 1a"
-}
-
 output "subnet_pri1_1c_id" {
   value       = aws_subnet.pri1_1c.id
   description = "ID of the first created private subnet in AZ 1c"
+}
+
+output "subnet_pri2_1a_id" {
+  value       = aws_subnet.pri2_1a.id
+  description = "ID of the second created private subnet in AZ 1a"
 }
 
 output "subnet_pri2_1c_id" {
