@@ -60,6 +60,17 @@ module "aurora" {
   db_password    = var.db_password
 }
 
+module "alb" {
+  source = "../../modules/alb"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  vpc_id         = module.vpc.vpc_id
+  pub_subnet_ids = [module.vpc.subnet_pub_1a_id, module.vpc.subnet_pub_1c_id]
+  pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
+}
+
 module "ecr" {
   source = "../../modules/ecr"
 
@@ -88,15 +99,4 @@ module "ecs" {
   scale_in_cooldown         = var.scale_in_cooldown
   autoscaling_min_capacity  = var.autoscaling_min_capacity
   autoscaling_max_capacity  = var.autoscaling_max_capacity
-}
-
-module "alb" {
-  source = "../../modules/alb"
-
-  environment = var.environment
-  app_name    = var.app_name
-
-  vpc_id         = module.vpc.vpc_id
-  pub_subnet_ids = [module.vpc.subnet_pub_1a_id, module.vpc.subnet_pub_1c_id]
-  pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
 }
