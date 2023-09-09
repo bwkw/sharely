@@ -52,3 +52,28 @@ variable "go_image_url" {
   description = "ECR URL for the Go application"
   type        = string
 }
+
+variable "cpu_scale_up_target_value" {
+  description = "Target value for CPU utilization to trigger scale up."
+  type        = number
+}
+
+variable "scale_out_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-out activity completes."
+  type        = number
+}
+
+variable "scale_in_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-in activity completes."
+  type        = number
+}
+
+variable "autoscaling_min_capacity" {
+  description = "Minimum capacity for application autoscaling."
+  type        = number
+}
+
+variable "autoscaling_max_capacity" {
+  description = "Maximum capacity for application autoscaling."
+  type        = number
+}

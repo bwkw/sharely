@@ -110,3 +110,33 @@ variable "task_memory" {
   type        = string
   default     = "512"
 }
+
+variable "cpu_scale_up_target_value" {
+  description = "Target value for CPU utilization to trigger scale up."
+  type        = number
+  default     = 80
+}
+
+variable "scale_out_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-out activity completes."
+  type        = number
+  default     = 60
+}
+
+variable "scale_in_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-in activity completes."
+  type        = number
+  default     = 300
+}
+
+variable "autoscaling_min_capacity" {
+  description = "Minimum capacity for application autoscaling."
+  type        = number
+  default     = 1
+}
+
+variable "autoscaling_max_capacity" {
+  description = "Maximum capacity for application autoscaling."
+  type        = number
+  default     = 2
+}

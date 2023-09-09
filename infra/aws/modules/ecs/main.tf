@@ -1,9 +1,9 @@
-## 共通のクラスタ
+# 共通のクラスタ
 resource "aws_ecs_cluster" "main" {
   name = "${var.environment}-${var.app_name}-cluster"
 }
 
-## ECS実行ロール
+# ECS実行ロール
 resource "aws_iam_role" "ecs_execution_role" {
   name               = "${var.environment}-${var.app_name}-ecs-execution-role"
   assume_role_policy = jsonencode({
@@ -48,7 +48,7 @@ resource "aws_ecs_service" "next_js" {
 
 # Next.js タスク定義
 resource "aws_ecs_task_definition" "next_js" {
-  family                   = "next-js-task-family"
+  family                   = "next-js-task-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.task_cpu
@@ -67,8 +67,8 @@ resource "aws_appautoscaling_target" "next_js" {
   resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.next_js.name}"
   scalable_dimension = "ecs:service:DesiredCount"
 
-  min_capacity = 1
-  max_capacity = 2
+  min_capacity = var.autoscaling_min_capacity
+  max_capacity = var.autoscaling_max_capacity
 }
 
 resource "aws_appautoscaling_policy" "next_js_cpu_scale_up" {
@@ -79,13 +79,13 @@ resource "aws_appautoscaling_policy" "next_js_cpu_scale_up" {
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {
-    target_value       = 80
+    target_value       = var.cpu_scale_up_target_value
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
 
-    scale_out_cooldown = 60
-    scale_in_cooldown  = 300
+    scale_out_cooldown = var.scale_out_cooldown
+    scale_in_cooldown  = var.scale_in_cooldown
   }
 }
 
@@ -105,7 +105,7 @@ resource "aws_ecs_service" "go" {
 
 # Go タスク定義
 resource "aws_ecs_task_definition" "go" {
-  family                   = "go-task-family"
+  family                   = "go-task-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.task_cpu
@@ -124,8 +124,8 @@ resource "aws_appautoscaling_target" "go" {
   resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.go.name}"
   scalable_dimension = "ecs:service:DesiredCount"
 
-  min_capacity = 1
-  max_capacity = 2
+  min_capacity = var.autoscaling_min_capacity
+  max_capacity = var.autoscaling_max_capacity
 }
 
 resource "aws_appautoscaling_policy" "go_cpu_scale_up" {
@@ -136,12 +136,12 @@ resource "aws_appautoscaling_policy" "go_cpu_scale_up" {
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {
-    target_value       = 80
+    target_value       = var.cpu_scale_up_target_value
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
 
-    scale_out_cooldown = 60
-    scale_in_cooldown  = 300
+    scale_out_cooldown = var.scale_out_cooldown
+    scale_in_cooldown  = var.scale_in_cooldown
   }
 }
