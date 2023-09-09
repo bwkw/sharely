@@ -92,3 +92,51 @@ variable "instance_class" {
   type        = string
   default     = "db.t4g.medium"
 }
+
+variable "desired_count" {
+  description = "The desired number of tasks for the ECS service"
+  type        = number
+  default     = 2
+}
+
+variable "task_cpu" {
+  description = "The amount of CPU to allocate to the task"
+  type        = string
+  default     = "256" # 0.25 vCPU
+}
+
+variable "task_memory" {
+  description = "The amount of memory to allocate to the task"
+  type        = string
+  default     = "512"
+}
+
+variable "cpu_scale_up_target_value" {
+  description = "Target value for CPU utilization to trigger scale up."
+  type        = number
+  default     = 80
+}
+
+variable "scale_out_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-out activity completes."
+  type        = number
+  default     = 60
+}
+
+variable "scale_in_cooldown" {
+  description = "Cooldown period (in seconds) after a scale-in activity completes."
+  type        = number
+  default     = 300
+}
+
+variable "autoscaling_min_capacity" {
+  description = "Minimum capacity for application autoscaling."
+  type        = number
+  default     = 1
+}
+
+variable "autoscaling_max_capacity" {
+  description = "Maximum capacity for application autoscaling."
+  type        = number
+  default     = 2
+}

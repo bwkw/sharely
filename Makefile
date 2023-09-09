@@ -1,5 +1,6 @@
 init:
-	docker compose up -d --build
+	docker compose build --no-cache
+	docker compose up -d 
 	sleep 3
 	make db-migration
 	make db-seeder
