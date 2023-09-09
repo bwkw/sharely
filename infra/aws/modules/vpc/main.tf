@@ -117,6 +117,160 @@ resource "aws_route_table_association" "pub_rt_associate_1c" {
   route_table_id = aws_route_table.pub.id
 }
 
+# プライベートサブネットのルートテーブル
+resource "aws_route_table" "pri" {
+  vpc_id = aws_vpc.main.id
+  
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri-rt"
+  }
+}
+
+# プライベートサブネットとルートテーブルの関連付け
+resource "aws_route_table_association" "pri1_rt_associate_1a" {
+  subnet_id      = aws_subnet.pri1_1a.id
+  route_table_id = aws_route_table.pri.id
+}
+
+resource "aws_route_table_association" "pri1_rt_associate_1c" {
+  subnet_id      = aws_subnet.pri1_1c.id
+  route_table_id = aws_route_table.pri.id
+}
+
+resource "aws_route_table_association" "pri2_rt_associate_1a" {
+  subnet_id      = aws_subnet.pri2_1a.id
+  route_table_id = aws_route_table.pri.id
+}
+
+resource "aws_route_table_association" "pri2_rt_associate_1c" {
+  subnet_id      = aws_subnet.pri2_1c.id
+  route_table_id = aws_route_table.pri.id
+}
+
+# パブリックALBのセキュリティグループ
+resource "aws_security_group" "pub_alb" {
+  name        = "${var.environment}-${var.app_name}-pub-alb-sg"
+  description = "Security Group for Public ALB"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pub-alb-sg"
+  }
+}
+
+resource "aws_security_group_rule" "pub_alb_ingress" {
+  security_group_id = aws_security_group.pub_alb.id
+
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "pub_alb_egress" {
+  security_group_id = aws_security_group.pub_alb.id
+
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+# Next.jsコンテナのセキュリティグループ
+resource "aws_security_group" "next_js_ecs_tasks" {
+  name        = "${var.environment}-${var.app_name}-next-js-ecs-tasks-sg"
+  description = "Security Group for Next.js ECS Tasks"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.environment}-${var.app_name}-next-js-ecs-tasks-sg"
+  }
+}
+
+resource "aws_security_group_rule" "next_js_ecs_ingress_from_alb" {
+  security_group_id = aws_security_group.next_js_ecs_tasks.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.pub_alb.id
+}
+
+resource "aws_security_group_rule" "next_js_ecs_egress" {
+  security_group_id = aws_security_group.next_js_ecs_tasks.id
+
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+# プライベートALBのセキュリティグループ
+resource "aws_security_group" "pri_alb" {
+  name        = "${var.environment}-${var.app_name}-pri-alb-sg"
+  description = "Security Group for Private ALB"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.environment}-${var.app_name}-pri-alb-sg"
+  }
+}
+
+resource "aws_security_group_rule" "pri_alb_ingress_from_nextjs" {
+  security_group_id = aws_security_group.pri_alb.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "pri_alb_egress" {
+  security_group_id = aws_security_group.pri_alb.id
+
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+# Goコンテナのセキュリティグループ
+resource "aws_security_group" "go_ecs_tasks" {
+  name        = "${var.environment}-${var.app_name}-go-ecs-tasks-sg"
+  description = "Security Group for Go ECS Tasks"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.environment}-${var.app_name}-go-ecs-tasks-sg"
+  }
+}
+
+resource "aws_security_group_rule" "go_ecs_ingress_from_alb" {
+  security_group_id = aws_security_group.go_ecs_tasks.id
+
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.pri_alb.id
+}
+
+resource "aws_security_group_rule" "go_ecs_egress" {
+  security_group_id = aws_security_group.go_ecs_tasks.id
+
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 # Auroraのセキュリティグループ
 resource "aws_security_group" "aurora" {
   name        = "${var.environment}-${var.app_name}-aurora-sg"
