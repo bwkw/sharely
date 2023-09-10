@@ -83,10 +83,10 @@ module "ecs" {
   environment = var.environment
   app_name    = var.app_name
 
-  subnets_next_js         = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  subnets_go              = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  next_js_ecs_tasks_sg_id = module.vpc.next_js_ecs_tasks_sg_id
-  go_ecs_tasks_sg_id      = module.vpc.go_ecs_tasks_sg_id
+  next_js_ecs_tasks_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  go_ecs_tasks_sub_ids      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  next_js_ecs_tasks_sg_ids  = [module.vpc.next_js_ecs_tasks_sg_id]
+  go_ecs_tasks_sg_ids       = [module.vpc.go_ecs_tasks_sg_id]
 
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url
