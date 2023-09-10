@@ -77,3 +77,13 @@ variable "autoscaling_max_capacity" {
   description = "Maximum capacity for application autoscaling."
   type        = number
 }
+
+variable "pub_alb_tg_arn" {
+  description = "The ARN of the public ALB target group for the ECS service"
+  type        = string
+}
+
+variable "pri_alb_tg_arn" {
+  description = "The ARN of the private ALB target group for the ECS service"
+  type        = string
+}

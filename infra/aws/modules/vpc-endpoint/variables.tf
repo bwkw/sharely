@@ -18,17 +18,12 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_pri2_1a_id" {
-  description = "ID of the second created private subnet in AZ 1a"
-  type        = string
-}
-
-variable "subnet_pri2_1c_id" {
-  description = "ID of the second created private subnet in AZ 1c"
-  type        = string
+variable "pri1_sub_ids" {
+  description = "List of primary subnet IDs"
+  type        = list(string)
 }
 
 variable "security_group_ids" {
-  description = "List of security group IDs to be associated with the VPC endpoint"
+  description = "List of security group IDs for the Secrets Manager VPC Endpoint"
   type        = list(string)
 }

@@ -57,3 +57,8 @@ output "aurora_sg_id" {
   description = "The ID of the security group for Aurora"
   value       = aws_security_group.aurora.id
 }
+
+output "secrets_manager_vpc_endpoint_sg_id" {
+  description = "The ID of the security group for Secrets Manager VPC Endpoint"
+  value       = aws_security_group.secrets_manager_vpc_endpoint.id
+}

@@ -29,18 +29,17 @@ module "secrets_manager" {
   db_password = var.db_password
 }
 
-# module "vpc_endpoint" {
-#   source = "../../modules/vpc-endpoint"
+module "vpc_endpoint" {
+  source = "../../modules/vpc-endpoint"
 
-#   environment = var.environment
-#   app_name    = var.app_name
+  environment = var.environment
+  app_name    = var.app_name
 
-#   region             = var.region
-#   vpc_id             = module.vpc.vpc_id
-#   subnet_pri2_1a_id  = module.vpc.subnet_pri2_1a_id
-#   subnet_pri2_1c_id  = module.vpc.subnet_pri2_1c_id
-#   security_group_ids = [module.vpc.aurora]
-# }
+  region             = var.region
+  vpc_id             = module.vpc.vpc_id
+  pri1_sub_ids       = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
+  security_group_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+}
 
 module "aurora" {
   source = "../../modules/aurora"
@@ -58,6 +57,19 @@ module "aurora" {
   instance_class = var.instance_class
   db_username    = var.db_username
   db_password    = var.db_password
+}
+
+module "alb" {
+  source = "../../modules/alb"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  vpc_id         = module.vpc.vpc_id
+  pub_subnet_ids = [module.vpc.subnet_pub_1a_id, module.vpc.subnet_pub_1c_id]
+  pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
+  pri_subnet_ids = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
+  pri_alb_sg_id  = [module.vpc.pri_alb_sg_id]
 }
 
 module "ecr" {
@@ -79,6 +91,9 @@ module "ecs" {
 
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url
+
+  pub_alb_tg_arn = module.alb.pub_alb_tg_arn
+  pri_alb_tg_arn = module.alb.pri_alb_tg_arn
 
   desired_count             = var.desired_count
   task_cpu                  = var.task_cpu
