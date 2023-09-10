@@ -35,10 +35,10 @@ module "vpc_endpoint" {
   environment = var.environment
   app_name    = var.app_name
 
-  region             = var.region
-  vpc_id             = module.vpc.vpc_id
-  pri1_sub_ids       = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  security_group_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  region       = var.region
+  vpc_id       = module.vpc.vpc_id
+  pri1_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  sg_ids       = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
 }
 
 module "aurora" {
@@ -51,7 +51,7 @@ module "aurora" {
   availability_zone_a = var.availability_zone_a
   availability_zone_c = var.availability_zone_c
   pri2_sub_ids        = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
-  security_group_ids  = [module.vpc.aurora_sg_id]
+  sg_ids              = [module.vpc.aurora_sg_id]
 
   instance_class = var.instance_class
   db_username    = var.db_username

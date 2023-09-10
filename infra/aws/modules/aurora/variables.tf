@@ -28,7 +28,7 @@ variable "pri2_sub_ids" {
   type        = list(string)
 }
 
-variable "security_group_ids" {
+variable "sg_ids" {
   description = "List of security group IDs to associate with Aurora"
   type        = list(string)
 }

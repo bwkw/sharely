@@ -23,7 +23,7 @@ variable "pri1_sub_ids" {
   type        = list(string)
 }
 
-variable "security_group_ids" {
+variable "sg_ids" {
   description = "List of security group IDs for the Secrets Manager VPC Endpoint"
   type        = list(string)
 }

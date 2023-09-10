@@ -10,7 +10,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
   skip_final_snapshot     = true
-  vpc_security_group_ids  = var.security_group_ids
+  vpc_security_group_ids  = var.sg_ids
   db_subnet_group_name    = aws_db_subnet_group.aurora.name
   availability_zones      = [var.availability_zone_a, var.availability_zone_c]
 }

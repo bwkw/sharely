@@ -3,7 +3,7 @@ resource "aws_vpc_endpoint" "secrets_manager" {
   service_name      = "com.amazonaws.${var.region}.rds"
   vpc_endpoint_type = "Interface"
   subnet_ids = var.pri1_sub_ids
-  security_group_ids = var.security_group_ids
+  security_group_ids = var.sg_ids
 
   private_dns_enabled = true
 
