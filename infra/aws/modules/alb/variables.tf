@@ -1,10 +1,10 @@
-variable "environment" {
-  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
+variable "app_name" {
+  description = "The name of the application."
   type        = string
 }
 
-variable "app_name" {
-  description = "The name of the application."
+variable "environment" {
+  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
   type        = string
 }
 

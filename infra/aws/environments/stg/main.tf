@@ -1,8 +1,8 @@
 module "vpc" {
   source = "../../modules/vpc"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   vpc_cidr = var.vpc_cidr
 
@@ -22,8 +22,8 @@ module "vpc" {
 module "secrets_manager" {
   source = "../../modules/secrets-manager"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   db_username = var.db_username
   db_password = var.db_password
@@ -32,8 +32,8 @@ module "secrets_manager" {
 module "vpc_endpoint" {
   source = "../../modules/vpc-endpoint"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   region       = var.region
   vpc_id       = module.vpc.vpc_id
@@ -44,8 +44,8 @@ module "vpc_endpoint" {
 module "aurora" {
   source = "../../modules/aurora"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   vpc_id              = module.vpc.vpc_id
   availability_zone_a = var.availability_zone_a
@@ -80,8 +80,8 @@ module "ecr" {
 module "ecs" {
   source = "../../modules/ecs"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   next_js_ecs_tasks_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
   go_ecs_tasks_sub_ids      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]

@@ -1,10 +1,10 @@
-variable "environment" {
-  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
+variable "app_name" {
+  description = "Name of the application"
   type        = string
 }
 
-variable "app_name" {
-  description = "Name of the application"
+variable "environment" {
+  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
   type        = string
 }
 

@@ -1,11 +1,11 @@
-variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
-  default     = "stg"
-}
-
 variable "app_name" {
   description = "Application name"
   type        = string
+}
+
+variable "environment" {
+  description = "Environment name (e.g., 'stg', 'prod')"
+  default     = "stg"
 }
 
 variable "region" {
