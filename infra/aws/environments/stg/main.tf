@@ -64,11 +64,11 @@ module "alb" {
   environment = var.environment
   app_name    = var.app_name
 
-  vpc_id         = module.vpc.vpc_id
-  pub_subnet_ids = [module.vpc.pub_sub_1a_id, module.vpc.pub_sub_1c_id]
-  pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
-  pri_subnet_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  pri_alb_sg_id  = [module.vpc.pri_alb_sg_id]
+  vpc_id          = module.vpc.vpc_id
+  pub_sub_ids     = [module.vpc.pub_sub_1a_id, module.vpc.pub_sub_1c_id]
+  pub_alb_sg_ids  = [module.vpc.pub_alb_sg_id]
+  pri1_sub_ids    = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  pri1_alb_sg_ids = [module.vpc.pri_alb_sg_id]
 }
 
 module "ecr" {
