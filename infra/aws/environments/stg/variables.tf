@@ -22,13 +22,13 @@ variable "vpc_cidr" {
   default     = "192.168.0.0/24"
 }
 
-variable "availability_zone_a" {
+variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string
   default     = "ap-northeast-1a"
 }
 
-variable "availability_zone_c" {
+variable "az_c" {
   description = "Availability Zone for the 1c subnet"
   type        = string
   default     = "ap-northeast-1c"

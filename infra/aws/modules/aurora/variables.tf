@@ -13,12 +13,12 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "availability_zone_a" {
+variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string
 }
 
-variable "availability_zone_c" {
+variable "az_c" {
   description = "Availability Zone for the 1c subnet"
   type        = string
 }

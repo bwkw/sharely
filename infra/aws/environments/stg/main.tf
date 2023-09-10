@@ -6,8 +6,8 @@ module "vpc" {
 
   vpc_cidr = var.vpc_cidr
 
-  availability_zone_a = var.availability_zone_a
-  availability_zone_c = var.availability_zone_c
+  az_a = var.az_a
+  az_c = var.az_c
 
   pub_sub_1a_cidr = var.pub_sub_1a_cidr
   pub_sub_1c_cidr = var.pub_sub_1c_cidr
@@ -47,11 +47,11 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  vpc_id              = module.vpc.vpc_id
-  availability_zone_a = var.availability_zone_a
-  availability_zone_c = var.availability_zone_c
-  pri2_sub_ids        = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
-  sg_ids              = [module.vpc.aurora_sg_id]
+  vpc_id       = module.vpc.vpc_id
+  az_a         = var.az_a
+  az_c         = var.az_c
+  pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
+  sg_ids       = [module.vpc.aurora_sg_id]
 
   instance_class = var.instance_class
   db_username    = var.db_username

@@ -12,14 +12,14 @@ resource "aws_rds_cluster" "aurora_cluster" {
   skip_final_snapshot     = true
   vpc_security_group_ids  = var.sg_ids
   db_subnet_group_name    = aws_db_subnet_group.aurora.name
-  availability_zones      = [var.availability_zone_a, var.availability_zone_c]
+  availability_zones      = [var.az_a, var.az_c]
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance_1a" {
   identifier         = "${var.app_name}-${var.environment}-aurora-instance-1a"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
-  availability_zone  = var.availability_zone_a
+  availability_zone  = var.az_a
   engine = "aurora-mysql"
 }
 
@@ -27,7 +27,7 @@ resource "aws_rds_cluster_instance" "aurora_instance_1c" {
   identifier         = "${var.app_name}-${var.environment}-aurora-instance-1c"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
-  availability_zone  = var.availability_zone_c
+  availability_zone  = var.az_c
   engine = "aurora-mysql"
 }
 
