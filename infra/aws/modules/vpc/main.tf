@@ -341,7 +341,6 @@ resource "aws_security_group_rule" "go_ecs_egress" {
   source_security_group_id = aws_security_group.aurora.id
 }
 
-
 # Auroraのセキュリティグループ
 resource "aws_security_group" "aurora" {
   name        = "${var.app_name}-${var.environment}-aurora-sg"
@@ -360,5 +359,25 @@ resource "aws_security_group_rule" "aurora_ingress" {
   from_port                = 3306
   to_port                  = 3306
   protocol                 = "tcp"
+  source_security_group_id = aws_security_group.go_ecs_tasks.id
+}
+
+resource "aws_security_group" "secrets_manager_vpc_endpoint" {
+  name        = "${var.app_name}-${var.environment}-secrets-manager-vpc-endpoint-sg"
+  description = "Security Group for Secrets Manager VPC Endpoint"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.app_name}-${var.environment}-secrets-manager-vpc-endpoint-sg"
+  }
+}
+
+resource "aws_security_group_rule" "secrets_manager_vpc_endpoint_ingress" {
+  security_group_id = aws_security_group.secrets_manager_vpc_endpoint.id
+
+  type        = "ingress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
   source_security_group_id = aws_security_group.go_ecs_tasks.id
 }
