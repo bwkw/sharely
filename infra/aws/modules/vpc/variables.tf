@@ -1,10 +1,10 @@
-variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
+variable "app_name" {
+  description = "Application name"
   type        = string
 }
 
-variable "app_name" {
-  description = "Application name"
+variable "environment" {
+  description = "Environment name (e.g., 'stg', 'prod')"
   type        = string
 }
 
@@ -13,12 +13,12 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "availability_zone_a" {
+variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string
 }
 
-variable "availability_zone_c" {
+variable "az_c" {
   description = "Availability Zone for the 1c subnet"
   type        = string
 }

@@ -1,10 +1,10 @@
-variable "environment" {
-  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
+variable "app_name" {
+  description = "Name of the application"
   type        = string
 }
 
-variable "app_name" {
-  description = "Name of the application"
+variable "environment" {
+  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
   type        = string
 }
 
@@ -23,24 +23,24 @@ variable "task_memory" {
   type        = string
 }
 
-variable "subnets_next_js" {
+variable "next_js_ecs_tasks_sub_ids" {
   description = "List of subnet IDs for deploying the Next.js application in ECS"
   type        = list(string)
 }
 
-variable "subnets_go" {
+variable "go_ecs_tasks_sub_ids" {
   description = "List of subnet IDs for deploying the Go application in ECS"
   type        = list(string)
 }
 
-variable "next_js_ecs_tasks_sg_id" {
-  description = "The ID of the security group for Next.js ECS Tasks"
-  type        = string
+variable "next_js_ecs_tasks_sg_ids" {
+  description = "List of security group IDs for deploying the Next.js application in ECS"
+  type        = list(string)
 }
 
-variable "go_ecs_tasks_sg_id" {
-  description = "The ID of the security group for Go ECS Tasks"
-  type        = string
+variable "go_ecs_tasks_sg_ids" {
+  description = "List of security group IDs for deploying the Go application in ECS"
+  type        = list(string)
 }
 
 variable "next_js_image_url" {

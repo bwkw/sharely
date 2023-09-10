@@ -19,7 +19,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "pub_1a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.pub_sub_1a_cidr
-  availability_zone       = var.availability_zone_a
+  availability_zone       = var.az_a
   map_public_ip_on_launch = true
 
   tags = {
@@ -30,7 +30,7 @@ resource "aws_subnet" "pub_1a" {
 resource "aws_subnet" "pub_1c" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.pub_sub_1c_cidr
-  availability_zone       = var.availability_zone_c
+  availability_zone       = var.az_c
   map_public_ip_on_launch = true
 
   tags = {
@@ -42,7 +42,7 @@ resource "aws_subnet" "pub_1c" {
 resource "aws_subnet" "pri1_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pri1_sub_1a_cidr
-  availability_zone = var.availability_zone_a
+  availability_zone = var.az_a
 
   tags = {
     Name = "${var.app_name}-${var.environment}-pri1-1a-sub"
@@ -52,7 +52,7 @@ resource "aws_subnet" "pri1_1a" {
 resource "aws_subnet" "pri2_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pri2_sub_1a_cidr
-  availability_zone = var.availability_zone_a
+  availability_zone = var.az_a
   
   tags = {
     Name = "${var.app_name}-${var.environment}-pri2-1a-sub"
@@ -63,7 +63,7 @@ resource "aws_subnet" "pri2_1a" {
 resource "aws_subnet" "pri1_1c" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pri1_sub_1c_cidr
-  availability_zone = var.availability_zone_c
+  availability_zone = var.az_c
   
   tags = {
     Name = "${var.app_name}-${var.environment}-pri1-1c-sub"
@@ -73,7 +73,7 @@ resource "aws_subnet" "pri1_1c" {
 resource "aws_subnet" "pri2_1c" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pri2_sub_1c_cidr
-  availability_zone = var.availability_zone_c
+  availability_zone = var.az_c
   
   tags = {
     Name = "${var.app_name}-${var.environment}-pri2-1c-sub"

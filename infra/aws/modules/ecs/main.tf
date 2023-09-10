@@ -40,8 +40,8 @@ resource "aws_ecs_service" "next_js" {
   desired_count   = var.desired_count
 
   network_configuration {
-    subnets          = var.subnets_next_js
-    security_groups  = [var.next_js_ecs_tasks_sg_id]
+    subnets          = var.next_js_ecs_tasks_sub_ids
+    security_groups  = var.next_js_ecs_tasks_sg_ids
     assign_public_ip = true
   }
 
@@ -106,8 +106,8 @@ resource "aws_ecs_service" "go" {
   desired_count   = var.desired_count
 
   network_configuration {
-    subnets          = var.subnets_go
-    security_groups  = [var.go_ecs_tasks_sg_id]
+    subnets          = var.go_ecs_tasks_sub_ids
+    security_groups  = var.go_ecs_tasks_sg_ids
   }
 
   load_balancer {

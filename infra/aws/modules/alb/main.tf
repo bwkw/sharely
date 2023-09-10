@@ -2,8 +2,8 @@ resource "aws_lb" "pub_alb" {
   name               = "${var.app_name}-${var.environment}-pub-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = var.pub_alb_sg_id
-  subnets            = var.pub_subnet_ids
+  security_groups    = var.pub_alb_sg_ids
+  subnets            = var.pub_sub_ids
 
   enable_deletion_protection = false
 
@@ -44,8 +44,8 @@ resource "aws_lb" "pri_alb" {
   name               = "${var.app_name}-${var.environment}-pri-alb"
   internal           = true
   load_balancer_type = "application"
-  security_groups    = var.pri_alb_sg_id
-  subnets            = var.pri_subnet_ids
+  security_groups    = var.pri1_alb_sg_ids
+  subnets            = var.pri1_sub_ids
 
   enable_deletion_protection = false
 

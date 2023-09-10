@@ -1,13 +1,13 @@
 module "vpc" {
   source = "../../modules/vpc"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   vpc_cidr = var.vpc_cidr
 
-  availability_zone_a = var.availability_zone_a
-  availability_zone_c = var.availability_zone_c
+  az_a = var.az_a
+  az_c = var.az_c
 
   pub_sub_1a_cidr = var.pub_sub_1a_cidr
   pub_sub_1c_cidr = var.pub_sub_1c_cidr
@@ -22,8 +22,8 @@ module "vpc" {
 module "secrets_manager" {
   source = "../../modules/secrets-manager"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
   db_username = var.db_username
   db_password = var.db_password
@@ -32,27 +32,26 @@ module "secrets_manager" {
 module "vpc_endpoint" {
   source = "../../modules/vpc-endpoint"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
-  region             = var.region
-  vpc_id             = module.vpc.vpc_id
-  pri1_sub_ids       = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
-  security_group_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  region       = var.region
+  vpc_id       = module.vpc.vpc_id
+  pri1_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  sg_ids       = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
 }
 
 module "aurora" {
   source = "../../modules/aurora"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
-  vpc_id              = module.vpc.vpc_id
-  availability_zone_a = var.availability_zone_a
-  availability_zone_c = var.availability_zone_c
-  subnet_pri2_1a_id   = module.vpc.subnet_pri2_1a_id
-  subnet_pri2_1c_id   = module.vpc.subnet_pri2_1c_id
-  security_group_ids  = [module.vpc.aurora_sg_id]
+  vpc_id       = module.vpc.vpc_id
+  az_a         = var.az_a
+  az_c         = var.az_c
+  pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
+  sg_ids       = [module.vpc.aurora_sg_id]
 
   instance_class = var.instance_class
   db_username    = var.db_username
@@ -65,11 +64,11 @@ module "alb" {
   environment = var.environment
   app_name    = var.app_name
 
-  vpc_id         = module.vpc.vpc_id
-  pub_subnet_ids = [module.vpc.subnet_pub_1a_id, module.vpc.subnet_pub_1c_id]
-  pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
-  pri_subnet_ids = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
-  pri_alb_sg_id  = [module.vpc.pri_alb_sg_id]
+  vpc_id          = module.vpc.vpc_id
+  pub_sub_ids     = [module.vpc.pub_sub_1a_id, module.vpc.pub_sub_1c_id]
+  pub_alb_sg_ids  = [module.vpc.pub_alb_sg_id]
+  pri1_sub_ids    = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  pri1_alb_sg_ids = [module.vpc.pri_alb_sg_id]
 }
 
 module "ecr" {
@@ -81,13 +80,13 @@ module "ecr" {
 module "ecs" {
   source = "../../modules/ecs"
 
-  environment = var.environment
   app_name    = var.app_name
+  environment = var.environment
 
-  subnets_next_js         = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
-  subnets_go              = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
-  next_js_ecs_tasks_sg_id = module.vpc.next_js_ecs_tasks_sg_id
-  go_ecs_tasks_sg_id      = module.vpc.go_ecs_tasks_sg_id
+  next_js_ecs_tasks_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  go_ecs_tasks_sub_ids      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  next_js_ecs_tasks_sg_ids  = [module.vpc.next_js_ecs_tasks_sg_id]
+  go_ecs_tasks_sg_ids       = [module.vpc.go_ecs_tasks_sg_id]
 
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url

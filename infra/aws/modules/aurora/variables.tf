@@ -1,10 +1,10 @@
-variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
+variable "app_name" {
+  description = "Application name"
   type        = string
 }
 
-variable "app_name" {
-  description = "Application name"
+variable "environment" {
+  description = "Environment name (e.g., 'stg', 'prod')"
   type        = string
 }
 
@@ -13,27 +13,22 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "availability_zone_a" {
+variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string
 }
 
-variable "availability_zone_c" {
+variable "az_c" {
   description = "Availability Zone for the 1c subnet"
   type        = string
 }
 
-variable "subnet_pri2_1a_id" {
-  description = "ID of the second private subnet in AZ 1a"
-  type        = string
+variable "pri2_sub_ids" {
+  description = "List of primary subnet IDs"
+  type        = list(string)
 }
 
-variable "subnet_pri2_1c_id" {
-  description = "ID of the second private subnet in AZ 1c"
-  type        = string
-}
-
-variable "security_group_ids" {
+variable "sg_ids" {
   description = "List of security group IDs to associate with Aurora"
   type        = list(string)
 }

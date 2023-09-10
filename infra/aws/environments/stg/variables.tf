@@ -1,13 +1,13 @@
-variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
-  type        = string
-  default     = "stg"
-}
-
 variable "app_name" {
   description = "Application name"
   type        = string
   default     = "sharely"
+}
+
+variable "environment" {
+  description = "Environment name (e.g., 'stg', 'prod')"
+  type        = string
+  default     = "stg"
 }
 
 variable "region" {
@@ -22,13 +22,13 @@ variable "vpc_cidr" {
   default     = "192.168.0.0/24"
 }
 
-variable "availability_zone_a" {
+variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string
   default     = "ap-northeast-1a"
 }
 
-variable "availability_zone_c" {
+variable "az_c" {
   description = "Availability Zone for the 1c subnet"
   type        = string
   default     = "ap-northeast-1c"
