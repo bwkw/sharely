@@ -64,6 +64,8 @@ resource "aws_ecs_task_definition" "next_js" {
   container_definitions = jsonencode([{
     name  = "${var.app_name}-${var.environment}-next-js-container"
     image = var.next_js_image_url
+    port = 80
+    memory = 512
   }])
 }
 
@@ -107,6 +109,12 @@ resource "aws_ecs_service" "go" {
     subnets          = var.subnets_go
     security_groups  = [var.go_ecs_tasks_sg_id]
   }
+
+  load_balancer {
+    target_group_arn = var.pri_alb_tg_arn
+    container_name   = "${var.app_name}-${var.environment}-go-container"
+    container_port   = 80 
+  }
 }
 
 # Go タスク定義
@@ -121,6 +129,8 @@ resource "aws_ecs_task_definition" "go" {
   container_definitions = jsonencode([{
     name  = "${var.app_name}-${var.environment}-go-container"
     image = var.go_image_url
+    port = 80
+    memory = 512
   }])
 }
 

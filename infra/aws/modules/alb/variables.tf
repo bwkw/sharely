@@ -22,3 +22,13 @@ variable "pub_subnet_ids" {
   description = "List of subnet IDs for the public Application Load Balancer."
   type        = list(string)
 }
+
+variable "pri_alb_sg_id" {
+  description = "Security Group ID for the private Application Load Balancer."
+  type        = list(string)
+}
+
+variable "pri_subnet_ids" {
+  description = "List of subnet IDs for the private Application Load Balancer."
+  type        = list(string)
+}

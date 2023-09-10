@@ -69,6 +69,8 @@ module "alb" {
   vpc_id         = module.vpc.vpc_id
   pub_subnet_ids = [module.vpc.subnet_pub_1a_id, module.vpc.subnet_pub_1c_id]
   pub_alb_sg_id  = [module.vpc.pub_alb_sg_id]
+  pri_subnet_ids = [module.vpc.subnet_pri1_1a_id, module.vpc.subnet_pri1_1c_id]
+  pri_alb_sg_id  = [module.vpc.pri_alb_sg_id]
 }
 
 module "ecr" {
@@ -92,6 +94,7 @@ module "ecs" {
   go_image_url      = module.ecr.go_repository_url
 
   pub_alb_tg_arn = module.alb.pub_alb_tg_arn
+  pri_alb_tg_arn = module.alb.pri_alb_tg_arn
 
   desired_count             = var.desired_count
   task_cpu                  = var.task_cpu
