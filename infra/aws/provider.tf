@@ -4,8 +4,8 @@ provider "aws" {
   max_retries = 20
   default_tags {
     tags = {
-      Environment     = "stg"
-      Service         = "sharely"
+      Environment = "stg"
+      Service     = "sharely"
     }
   }
 }
