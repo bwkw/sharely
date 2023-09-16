@@ -1,9 +1,10 @@
 name: Deploy to ECR
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - stg
+      - dev
 
 jobs:
   build-and-push:
