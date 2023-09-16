@@ -1,11 +1,11 @@
 locals {
   apps = {
     next_js = {
-      name: "next-js-front-app",
+      name: "${var.app_name}-${var.environment}-next-js-front-app",
       description: "Keep only 10 images for Next.js frontend app"
     },
     go = {
-      name: "go-backend-app",
+      name: "${var.app_name}-${var.environment}-go-backend-app",
       description: "Keep only 10 images for Go backend app"
     }
   }
