@@ -24,7 +24,6 @@ resource "aws_ecr_repository" "app" {
 
 resource "aws_ecr_lifecycle_policy" "app" {
   for_each = local.apps
-
   repository = aws_ecr_repository.app[each.key].name
 
   policy = jsonencode({
@@ -40,6 +39,29 @@ resource "aws_ecr_lifecycle_policy" "app" {
         action = {
           type = "expire"
         }
+      }
+    ]
+  })
+}
+
+resource "aws_ecr_repository_policy" "ecs" {
+  for_each = local.apps
+  repository = aws_ecr_repository.app[each.key].name
+
+  policy = jsonencode({
+    Version = "2008-10-17",
+    Statement = [
+      {
+        Sid       = "AllowEcsTasksToPullImages",
+        Effect    = "Allow",
+        Principal = {
+          AWS = var.ecs_execution_role_arn
+        },
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability"
+        ]
       }
     ]
   })
