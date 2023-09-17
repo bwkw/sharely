@@ -64,8 +64,11 @@ resource "aws_ecs_task_definition" "next_js" {
   container_definitions = jsonencode([{
     name  = "${var.app_name}-${var.environment}-next-js-container"
     image = var.next_js_image_url
-    port = 80
     memory = 512
+    portMappings = [{
+      containerPort = 80
+      hostPort      = 80
+    }]
   }])
 }
 
@@ -129,8 +132,11 @@ resource "aws_ecs_task_definition" "go" {
   container_definitions = jsonencode([{
     name  = "${var.app_name}-${var.environment}-go-container"
     image = var.go_image_url
-    port = 80
     memory = 512
+    portMappings = [{
+      containerPort = 80
+      hostPort      = 80
+    }]
   }])
 }
 

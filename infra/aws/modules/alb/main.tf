@@ -28,6 +28,7 @@ resource "aws_lb_target_group" "pub_alb" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+  target_type = "ip"
 
   health_check {
     enabled             = true
@@ -70,6 +71,7 @@ resource "aws_lb_target_group" "pri_alb" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+  target_type = "ip"
 
   health_check {
     enabled             = true
