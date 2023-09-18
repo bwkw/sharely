@@ -62,3 +62,8 @@ output "secrets_manager_vpc_endpoint_sg_id" {
   description = "The ID of the security group for Secrets Manager VPC Endpoint"
   value       = aws_security_group.secrets_manager_vpc_endpoint.id
 }
+
+output "ecr_vpc_endpoint_sg_id" {
+  description = "The ID of the security group for ECR VPC Endpoint"
+  value       = aws_security_group.ecr_vpc_endpoint.id
+}

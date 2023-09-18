@@ -35,10 +35,11 @@ module "vpc_endpoint" {
   app_name    = var.app_name
   environment = var.environment
 
-  region       = var.region
-  vpc_id       = module.vpc.vpc_id
-  pri1_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  sg_ids       = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  region                              = var.region
+  vpc_id                              = module.vpc.vpc_id
+  pri1_sub_ids                        = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  ecr_vpc_endpoint_sg_ids             = [module.vpc.ecr_vpc_endpoint_sg_id]
 }
 
 module "aurora" {
