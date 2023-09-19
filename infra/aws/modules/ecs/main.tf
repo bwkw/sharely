@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
+}
+
 locals {
   common_cluster_name = "${var.app_name}-${var.environment}-cluster"
   common_execution_role_name = "${var.app_name}-${var.environment}-ecs-execution-role"

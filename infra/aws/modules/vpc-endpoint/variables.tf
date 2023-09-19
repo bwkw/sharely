@@ -5,7 +5,7 @@ variable "app_name" {
 
 variable "environment" {
   description = "Environment name (e.g., 'stg', 'prod')"
-  default     = "stg"
+  type        = string
 }
 
 variable "region" {

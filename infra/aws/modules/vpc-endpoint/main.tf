@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
+}
+
 resource "aws_vpc_endpoint" "secrets_manager" {
   vpc_id            = var.vpc_id
   service_name      = "com.amazonaws.${var.region}.rds"

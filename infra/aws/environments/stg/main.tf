@@ -16,7 +16,6 @@ module "vpc" {
   pri2_sub_1a_cidr = var.pri2_sub_1a_cidr
   pri1_sub_1c_cidr = var.pri1_sub_1c_cidr
   pri2_sub_1c_cidr = var.pri2_sub_1c_cidr
-  allow_ip_list    = var.allow_ip_list
 }
 
 module "secrets_manager" {
@@ -48,7 +47,6 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  vpc_id       = module.vpc.vpc_id
   az_a         = var.az_a
   az_c         = var.az_c
   pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]

@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
+}
+
 resource "aws_lb" "pub_alb" {
   name               = "${var.app_name}-${var.environment}-pub-alb"
   internal           = false
