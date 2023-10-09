@@ -13,37 +13,37 @@ locals {
   common_name_prefix = "${var.app_name}-${var.environment}"
 
   subnets = {
-    pub_1a = {
+    pub_a = {
       cidr_block              = var.pub_subnets.a
       availability_zone       = var.az.a
       map_public_ip_on_launch = true
       subnet_type             = "public"
     },
-    pub_1c = {
+    pub_c = {
       cidr_block              = var.pub_subnets.c
       availability_zone       = var.az.c
       map_public_ip_on_launch = true
       subnet_type             = "public"
     },
-    pri1_1a = {
+    pri1_a = {
       cidr_block              = var.pri1_subnets.a
       availability_zone       = var.az.a
       map_public_ip_on_launch = false
       subnet_type             = "private"
     },
-    pri1_1c = {
+    pri1_c = {
       cidr_block              = var.pri1_subnets.c
       availability_zone       = var.az.c
       map_public_ip_on_launch = false
       subnet_type             = "private"
     },
-    pri2_1a = {
+    pri2_a = {
       cidr_block              = var.pri2_subnets.a
       availability_zone       = var.az.a
       map_public_ip_on_launch = false
       subnet_type             = "private"
     },
-    pri2_1c = {
+    pri2_c = {
       cidr_block              = var.pri2_subnets.c
       availability_zone       = var.az.c
       map_public_ip_on_launch = false
@@ -52,8 +52,8 @@ locals {
   }
 
   route_table_associations = {
-    pub = ["pub_1a", "pub_1c"],
-    pri = ["pri1_1a", "pri1_1c", "pri2_1a", "pri2_1c"]
+    pub = ["pub_a", "pub_c"],
+    pri = ["pri1_a", "pri1_c", "pri2_a", "pri2_c"]
   }
 }
 
@@ -76,7 +76,7 @@ resource "aws_subnet" "common" {
   map_public_ip_on_launch = each.value.map_public_ip_on_launch
 
   tags = {
-    Name = "${local.common_name_prefix}-${each.key}-sub"
+    Name = "${local.common_name_prefix}-${replace(each.key, "_", "-")}-sub"
   }
 }
 
@@ -125,7 +125,6 @@ resource "aws_route_table_association" "pri" {
 # パブリックALBのセキュリティグループ
 resource "aws_security_group" "pub_alb" {
   name        = "${local.common_name_prefix}-pub-alb-sg"
-  description = "Security Group for Public ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
@@ -133,223 +132,152 @@ resource "aws_security_group" "pub_alb" {
   }
 }
 
-resource "aws_security_group_rule" "pub_alb_ingress_http_from_internet" {
-  security_group_id = aws_security_group.pub_alb.id
+resource "aws_security_group_rule" "pub_alb_ingress" {
+  for_each = {
+    http  = { port = 80, cidr = "0.0.0.0/0" },
+    https = { port = 443, cidr = "0.0.0.0/0" }
+  }
 
-  type        = "ingress"
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.pub_alb.id
+  type              = "ingress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  cidr_blocks       = [each.value["cidr"]]
 }
 
-resource "aws_security_group_rule" "pub_alb_ingress_https_from_internet" {
-  security_group_id = aws_security_group.pub_alb.id
+resource "aws_security_group_rule" "pub_alb_egress" {
+  for_each = {
+    http  = { port = 80, sg = aws_security_group.frontend_ecs_tasks.id },
+    https = { port = 443, sg = aws_security_group.frontend_ecs_tasks.id }
+  }
 
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id        = aws_security_group.pub_alb.id
+  type                     = "egress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
-resource "aws_security_group_rule" "pub_alb_egress_http_to_next_js_ecs_tasks" {
-  security_group_id = aws_security_group.pub_alb.id
 
-  type        = "egress"
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
-}
-
-resource "aws_security_group_rule" "pub_alb_egress_https_to_next_js_ecs_tasks" {
-  security_group_id = aws_security_group.pub_alb.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
-}
-
-# Next.jsコンテナのセキュリティグループ
-resource "aws_security_group" "next_js_ecs_tasks" {
-  name        = "${local.common_name_prefix}-next-js-ecs-tasks-sg"
-  description = "Security Group for Next.js ECS Tasks"
+# Frontendコンテナのセキュリティグループ
+resource "aws_security_group" "frontend_ecs_tasks" {
+  name        = "${local.common_name_prefix}-frontend-ecs-tasks-sg"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${local.common_name_prefix}-next-js-ecs-tasks-sg"
+    Name = "${local.common_name_prefix}-frontend-ecs-tasks-sg"
   }
 }
 
-resource "aws_security_group_rule" "next_js_ecs_tasks_ingress_http_from_pub_alb" {
-  security_group_id = aws_security_group.next_js_ecs_tasks.id
+resource "aws_security_group_rule" "frontend_ecs_tasks_ingress" {
+  for_each = {
+    http  = { port = 80, sg = aws_security_group.pub_alb.id },
+    https = { port = 443, sg = aws_security_group.pub_alb.id }
+  }
 
+  security_group_id        = aws_security_group.frontend_ecs_tasks.id
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.pub_alb.id
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
-resource "aws_security_group_rule" "next_js_ecs_tasks_ingress_https_from_pub_alb" {
-  security_group_id = aws_security_group.next_js_ecs_tasks.id
+resource "aws_security_group_rule" "frontend_ecs_tasks_egress" {
+  for_each = {
+    to_pri_alb     = { port = 80, sg = aws_security_group.pri_alb.id },
+    to_ecr_endpoint = { port = 443, sg = aws_security_group.ecr_vpc_endpoint.id }
+  }
 
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.pub_alb.id
-}
-
-resource "aws_security_group_rule" "next_js_ecs_tasks_egress_http_to_pri_alb" {
-  security_group_id = aws_security_group.next_js_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.pri_alb.id
-}
-
-resource "aws_security_group_rule" "next_js_ecs_tasks_egress_https_to_pri_alb" {
-  security_group_id = aws_security_group.next_js_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.pri_alb.id
-}
-
-resource "aws_security_group_rule" "next_js_ecs_tasks_egress_https_to_ecr_vpc_endpoint" {
-  security_group_id = aws_security_group.next_js_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.ecr_vpc_endpoint.id
+  security_group_id        = aws_security_group.frontend_ecs_tasks.id
+  type                     = "egress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
 # プライベートALBのセキュリティグループ
 resource "aws_security_group" "pri_alb" {
   name        = "${local.common_name_prefix}-pri-alb-sg"
-  description = "Security Group for Private ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
     Name = "${local.common_name_prefix}-pri-alb-sg"
   }
 }
+resource "aws_security_group_rule" "pri_alb_ingress" {
+  for_each = {
+    http  = { port = 80, sg = aws_security_group.frontend_ecs_tasks.id },
+    https = { port = 443, sg = aws_security_group.frontend_ecs_tasks.id }
+  }
 
-resource "aws_security_group_rule" "pri_alb_ingress_http_from_next_js_ecs_tasks" {
-  security_group_id = aws_security_group.pri_alb.id
-
+  security_group_id        = aws_security_group.pri_alb.id
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
-resource "aws_security_group_rule" "pri_alb_ingress_https_from_next_js_ecs_tasks" {
-  security_group_id = aws_security_group.pri_alb.id
+resource "aws_security_group_rule" "pri_alb_egress" {
+  for_each = {
+    http  = { port = 80, sg = aws_security_group.backend_ecs_tasks.id },
+    https = { port = 443, sg = aws_security_group.backend_ecs_tasks.id }
+  }
 
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
+  security_group_id        = aws_security_group.pri_alb.id
+  type                     = "egress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
-resource "aws_security_group_rule" "pri_alb_egress_http_to_go_ecs_tasks" {
-  security_group_id = aws_security_group.pri_alb.id
-
-  type        = "egress"
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.go_ecs_tasks.id
-}
-
-resource "aws_security_group_rule" "pri_alb_egress_https_to_go_ecs_tasks" {
-  security_group_id = aws_security_group.pri_alb.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.go_ecs_tasks.id
-}
-
-# Goコンテナのセキュリティグループ
-resource "aws_security_group" "go_ecs_tasks" {
-  name        = "${local.common_name_prefix}-go-ecs-tasks-sg"
-  description = "Security Group for Go ECS Tasks"
+# Backendコンテナのセキュリティグループ
+resource "aws_security_group" "backend_ecs_tasks" {
+  name        = "${local.common_name_prefix}-backend-ecs-tasks-sg"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${local.common_name_prefix}-go-ecs-tasks-sg"
+    Name = "${local.common_name_prefix}-backend-ecs-tasks-sg"
   }
 }
 
-resource "aws_security_group_rule" "go_ecs_tasks_ingress_http_from_pri_alb" {
-  security_group_id = aws_security_group.go_ecs_tasks.id
+resource "aws_security_group_rule" "backend_ecs_tasks_ingress" {
+  for_each = {
+    http  = { port = 80, sg = aws_security_group.pri_alb.id },
+    https = { port = 443, sg = aws_security_group.pri_alb.id }
+  }
 
+  security_group_id        = aws_security_group.backend_ecs_tasks.id
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.pri_alb.id
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
-resource "aws_security_group_rule" "go_ecs_tasks_ingress_https_from_pri_alb" {
-  security_group_id = aws_security_group.go_ecs_tasks.id
+resource "aws_security_group_rule" "backend_ecs_tasks_egress" {
+  for_each = {
+    to_ecr_endpoint        = { port = 443, sg = aws_security_group.ecr_vpc_endpoint.id },
+    to_secrets_manager_endpoint = { port = 443, sg = aws_security_group.secrets_manager_vpc_endpoint.id },
+    to_aurora              = { port = 3306, sg = aws_security_group.aurora.id }
+  }
 
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.pri_alb.id
-}
-
-resource "aws_security_group_rule" "go_ecs_tasks_egress_https_to_ecr_vpc_endpoint" {
-  security_group_id = aws_security_group.go_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.ecr_vpc_endpoint.id
-}
-
-resource "aws_security_group_rule" "go_ecs_tasks_egress_https_to_secrets_manager_vpc_endpoint" {
-  security_group_id = aws_security_group.go_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.secrets_manager_vpc_endpoint.id
-}
-
-resource "aws_security_group_rule" "go_ecs_tasks_egress_to_aurora" {
-  security_group_id = aws_security_group.go_ecs_tasks.id
-
-  type        = "egress"
-  from_port   = 3306
-  to_port     = 3306
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.aurora.id
+  security_group_id        = aws_security_group.backend_ecs_tasks.id
+  type                     = "egress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
 # Auroraのセキュリティグループ
 resource "aws_security_group" "aurora" {
   name        = "${local.common_name_prefix}-aurora-sg"
-  description = "Security Group for both Aurora"
   vpc_id      = aws_vpc.main.id
 
   tags = {
@@ -357,20 +285,22 @@ resource "aws_security_group" "aurora" {
   }
 }
 
-resource "aws_security_group_rule" "aurora_ingress_from_go_ecs_tasks" {
-  security_group_id = aws_security_group.aurora.id
+resource "aws_security_group_rule" "aurora_ingress" {
+  for_each = {
+    mysql = { port = 3306, sg = aws_security_group.backend_ecs_tasks.id }
+  }
 
+  security_group_id        = aws_security_group.aurora.id
   type                     = "ingress"
-  from_port                = 3306
-  to_port                  = 3306
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.go_ecs_tasks.id
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
 # Secrets Manager VPC Endpointのセキュリティグループ
 resource "aws_security_group" "secrets_manager_vpc_endpoint" {
   name        = "${local.common_name_prefix}-secrets-manager-vpc-endpoint-sg"
-  description = "Security Group for Secrets Manager VPC Endpoint"
   vpc_id      = aws_vpc.main.id
 
   tags = {
@@ -378,20 +308,22 @@ resource "aws_security_group" "secrets_manager_vpc_endpoint" {
   }
 }
 
-resource "aws_security_group_rule" "secrets_manager_vpc_endpoint_ingress_from_go_ecs_tasks" {
-  security_group_id = aws_security_group.secrets_manager_vpc_endpoint.id
+resource "aws_security_group_rule" "secrets_manager_vpc_endpoint_ingress" {
+  for_each = {
+    https = { port = 443, sg = aws_security_group.backend_ecs_tasks.id }
+  }
 
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  source_security_group_id = aws_security_group.go_ecs_tasks.id
+  security_group_id        = aws_security_group.secrets_manager_vpc_endpoint.id
+  type                     = "ingress"
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
 
 # ECR VPC Endpointのセキュリティグループ
 resource "aws_security_group" "ecr_vpc_endpoint" {
   name        = "${local.common_name_prefix}-ecr-vpc-endpoint-sg"
-  description = "Security Group for ECR VPC Endpoint"
   vpc_id      = aws_vpc.main.id
 
   tags = {
@@ -399,22 +331,16 @@ resource "aws_security_group" "ecr_vpc_endpoint" {
   }
 }
 
-resource "aws_security_group_rule" "ecr_vpc_endpoint_ingress_from_next_js_ecs_tasks" {
-  security_group_id = aws_security_group.ecr_vpc_endpoint.id
+resource "aws_security_group_rule" "ecr_vpc_endpoint_ingress" {
+  for_each = {
+    from_frontend = { port = 443, sg = aws_security_group.frontend_ecs_tasks.id },
+    from_backend  = { port = 443, sg = aws_security_group.backend_ecs_tasks.id }
+  }
 
+  security_group_id        = aws_security_group.ecr_vpc_endpoint.id
   type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.next_js_ecs_tasks.id
-}
-
-resource "aws_security_group_rule" "ecr_vpc_endpoint_ingress_from_go_ecs_tasks" {
-  security_group_id = aws_security_group.ecr_vpc_endpoint.id
-
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.go_ecs_tasks.id
+  from_port         = each.value["port"]
+  to_port           = each.value["port"]
+  protocol          = "tcp"
+  source_security_group_id = each.value["sg"]
 }
