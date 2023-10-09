@@ -105,6 +105,18 @@ variable "task_memory" {
   default     = "512"
 }
 
+variable "next_js_image_tag" {
+  description = "The image tag for Next.js Image"
+  type        = string
+  default     = "test"
+}
+
+variable "go_image_tag" {
+  description = "The image tag for Go Image"
+  type        = string
+  default     = "test"
+}
+
 variable "cpu_scale_up_target_value" {
   description = "Target value for CPU utilization to trigger scale up."
   type        = number

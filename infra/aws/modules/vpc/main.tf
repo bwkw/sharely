@@ -9,22 +9,16 @@ terraform {
   }
 }
 
-# ---------------------------
-# VPC
-# ---------------------------
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
     Name = "${var.app_name}-${var.environment}-vpc"
   }
 }
 
-# ---------------------------
-# Subnets
-# ---------------------------
-
-# Public Subnets
 resource "aws_subnet" "pub_1a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.pub_sub_1a_cidr
@@ -47,7 +41,6 @@ resource "aws_subnet" "pub_1c" {
   }
 }
 
-# Private Subnets for 1a
 resource "aws_subnet" "pri1_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.pri1_sub_1a_cidr
@@ -89,9 +82,6 @@ resource "aws_subnet" "pri2_1c" {
   }
 }
 
-# ---------------------------
-# Internet Gateway
-# ---------------------------
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   
@@ -100,9 +90,6 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# ---------------------------
-# Route table
-# ---------------------------
 resource "aws_route_table" "pub" {
   vpc_id = aws_vpc.main.id
   route {
@@ -115,7 +102,6 @@ resource "aws_route_table" "pub" {
   }
 }
 
-# SubnetとRoute tableの関連付け
 resource "aws_route_table_association" "pub_rt_associate_1a" {
   subnet_id      = aws_subnet.pub_1a.id
   route_table_id = aws_route_table.pub.id
@@ -126,7 +112,6 @@ resource "aws_route_table_association" "pub_rt_associate_1c" {
   route_table_id = aws_route_table.pub.id
 }
 
-# プライベートサブネットのルートテーブル
 resource "aws_route_table" "pri" {
   vpc_id = aws_vpc.main.id
   
@@ -135,7 +120,6 @@ resource "aws_route_table" "pri" {
   }
 }
 
-# プライベートサブネットとルートテーブルの関連付け
 resource "aws_route_table_association" "pri1_rt_associate_1a" {
   subnet_id      = aws_subnet.pri1_1a.id
   route_table_id = aws_route_table.pri.id
@@ -436,19 +420,19 @@ resource "aws_security_group" "ecr_vpc_endpoint" {
 resource "aws_security_group_rule" "ecr_vpc_endpoint_ingress_from_next_js_ecs_tasks" {
   security_group_id = aws_security_group.ecr_vpc_endpoint.id
 
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.next_js_ecs_tasks.id
 }
 
 resource "aws_security_group_rule" "ecr_vpc_endpoint_ingress_from_go_ecs_tasks" {
   security_group_id = aws_security_group.ecr_vpc_endpoint.id
 
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.go_ecs_tasks.id
 }

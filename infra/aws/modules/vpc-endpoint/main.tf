@@ -15,7 +15,6 @@ resource "aws_vpc_endpoint" "secrets_manager" {
   vpc_endpoint_type = "Interface"
   subnet_ids = var.pri1_sub_ids
   security_group_ids = var.secrets_manager_vpc_endpoint_sg_ids
-
   private_dns_enabled = true
 
   tags = {
@@ -28,10 +27,12 @@ resource "aws_vpc_endpoint" "ecr_api" {
   service_name        = "com.amazonaws.${var.region}.ecr.api"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = var.pri1_sub_ids
-
   security_group_ids  = var.ecr_vpc_endpoint_sg_ids
-
   private_dns_enabled = true
+
+  tags = {
+    Name = "${var.app_name}-${var.environment}-ecr-api-vpc-endpoint"
+  }
 }
 
 resource "aws_vpc_endpoint" "ecr_dkr" {
@@ -39,8 +40,10 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = var.pri1_sub_ids
-
   security_group_ids  = var.ecr_vpc_endpoint_sg_ids
-
   private_dns_enabled = true
+
+  tags = {
+    Name = "${var.app_name}-${var.environment}-ecr-dkr-vpc-endpoint"
+  }
 }

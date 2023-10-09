@@ -18,7 +18,7 @@ module "vpc" {
   pri2_sub_1c_cidr = var.pri2_sub_1c_cidr
 }
 
-module "secrets_manager" {
+module "secrets-manager" {
   source = "../../modules/secrets-manager"
 
   app_name    = var.app_name
@@ -28,7 +28,7 @@ module "secrets_manager" {
   db_password = var.db_password
 }
 
-module "vpc_endpoint" {
+module "vpc-endpoint" {
   source = "../../modules/vpc-endpoint"
 
   app_name    = var.app_name
@@ -96,6 +96,9 @@ module "ecs" {
 
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url
+
+  next_js_image_tag = var.next_js_image_tag
+  go_image_tag      = var.go_image_tag
 
   pub_alb_tg_arn = module.alb.pub_alb_tg_arn
   pri_alb_tg_arn = module.alb.pri_alb_tg_arn

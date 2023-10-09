@@ -34,13 +34,23 @@ variable "ecs_tasks_sg_ids" {
 }
 
 variable "next_js_image_url" {
-  description = "ECR URL for the Next.js application"
+  description = "ECR URL for the Next.js Application"
   type        = string
 }
 
 variable "go_image_url" {
   description = "ECR URL for the Go application"
   type        = string
+}
+
+variable "next_js_image_tag" {
+  description = "ECR Image Tag for the Next.js Application"
+  type = string
+}
+
+variable "go_image_tag" {
+  description = "ECR Image Tag for the Go Application"
+  type = string
 }
 
 variable "cpu_scale_up_target_value" {

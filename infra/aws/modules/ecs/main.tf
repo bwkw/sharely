@@ -83,10 +83,12 @@ resource "aws_ecs_task_definition" "task" {
   for_each = {
     next_js = {
       image_url = var.next_js_image_url
+      image_tag = var.next_js_image_tag
       container_name_suffix = "next-js-container"
     },
     go = {
       image_url = var.go_image_url
+      image_tag = var.go_image_tag
       container_name_suffix = "go-container"
     }
   }
@@ -100,13 +102,17 @@ resource "aws_ecs_task_definition" "task" {
 
   container_definitions = jsonencode([{
     name  = "${var.app_name}-${var.environment}-${each.value.container_name_suffix}"
-    image = each.value.image_url
+    image = "${each.value.image_url}:${each.value.image_tag}"
     memory = 512
     portMappings = [{
       containerPort = 80
       hostPort      = 80
     }]
   }])
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture = "ARM64"
+  }
 }
 
 resource "aws_appautoscaling_target" "target" {
