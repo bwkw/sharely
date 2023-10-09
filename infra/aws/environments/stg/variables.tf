@@ -146,3 +146,19 @@ variable "autoscaling_max_capacity" {
   type        = number
   default     = 2
 }
+
+variable "iam_role_oidc_thumbprint" {
+  default = "3EA80E902FC385F36BC08193FBC678202D572994"
+}
+
+variable "iam_role_github_actions" {
+  default = {
+    repository = "bwkw/sharely"
+    branch     = "feature/#46/add-automatic-deploy-when-merged-to-stg-branch"
+  }
+}
+
+variable "sts_audience" {
+  type    = string
+  default = "sts.amazonaws.com"
+}

@@ -112,3 +112,16 @@ module "ecs" {
   autoscaling_min_capacity  = var.autoscaling_min_capacity
   autoscaling_max_capacity  = var.autoscaling_max_capacity
 }
+
+module "oidc" {
+  source = "../../modules/oidc"
+
+  app_name    = var.app_name
+  environment = var.environment
+
+  ecr_repository_arns = module.ecr.repository_arns
+  oidc_thumbprint     = var.iam_role_oidc_thumbprint
+  github_actions      = var.iam_role_github_actions
+  sts_audience        = var.sts_audience
+}
+
