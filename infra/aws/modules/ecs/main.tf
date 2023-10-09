@@ -109,10 +109,10 @@ resource "aws_ecs_task_definition" "task" {
       hostPort      = 80
     }]
   }])
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture = "ARM64"
-  }
+#  runtime_platform {
+#    operating_system_family = "LINUX"
+#    cpu_architecture = "ARM64"
+#  }
 }
 
 resource "aws_appautoscaling_target" "target" {
