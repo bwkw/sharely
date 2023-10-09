@@ -9,13 +9,17 @@ terraform {
   }
 }
 
+locals {
+  common_name_prefix = "${var.app_name}-${var.environment}"
+}
+
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-vpc"
+    Name = "${local.common_name_prefix}-vpc"
   }
 }
 
@@ -26,7 +30,7 @@ resource "aws_subnet" "pub_1a" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pub-1a-sub"
+    Name = "${local.common_name_prefix}-pub-1a-sub"
   }
 }
 
@@ -37,7 +41,7 @@ resource "aws_subnet" "pub_1c" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pub-1c-sub"
+    Name = "${local.common_name_prefix}-pub-1c-sub"
   }
 }
 
@@ -47,7 +51,7 @@ resource "aws_subnet" "pri1_1a" {
   availability_zone = var.az.a
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri1-1a-sub"
+    Name = "${local.common_name_prefix}-pri1-1a-sub"
   }
 }
 
@@ -57,7 +61,7 @@ resource "aws_subnet" "pri2_1a" {
   availability_zone = var.az.a
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri2-1a-sub"
+    Name = "${local.common_name_prefix}-pri2-1a-sub"
   }
 }
 
@@ -68,7 +72,7 @@ resource "aws_subnet" "pri1_1c" {
   availability_zone = var.az.c
   
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri1-1c-sub"
+    Name = "${local.common_name_prefix}-pri1-1c-sub"
   }
 }
 
@@ -78,7 +82,7 @@ resource "aws_subnet" "pri2_1c" {
   availability_zone = var.az.c
   
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri2-1c-sub"
+    Name = "${local.common_name_prefix}-pri2-1c-sub"
   }
 }
 
@@ -86,7 +90,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   
   tags = {
-    Name = "${var.app_name}-${var.environment}-igw"
+    Name = "${local.common_name_prefix}-igw"
   }
 }
 
@@ -98,7 +102,7 @@ resource "aws_route_table" "pub" {
   }
   
   tags = {
-    Name = "${var.app_name}-${var.environment}-pub-rt"
+    Name = "${local.common_name_prefix}-pub-rt"
   }
 }
 
@@ -116,7 +120,7 @@ resource "aws_route_table" "pri" {
   vpc_id = aws_vpc.main.id
   
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri-rt"
+    Name = "${local.common_name_prefix}-pri-rt"
   }
 }
 
@@ -142,12 +146,12 @@ resource "aws_route_table_association" "pri2_rt_associate_1c" {
 
 # パブリックALBのセキュリティグループ
 resource "aws_security_group" "pub_alb" {
-  name        = "${var.app_name}-${var.environment}-pub-alb-sg"
+  name        = "${local.common_name_prefix}-pub-alb-sg"
   description = "Security Group for Public ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pub-alb-sg"
+    Name = "${local.common_name_prefix}-pub-alb-sg"
   }
 }
 
@@ -193,12 +197,12 @@ resource "aws_security_group_rule" "pub_alb_egress_https_to_next_js_ecs_tasks" {
 
 # Next.jsコンテナのセキュリティグループ
 resource "aws_security_group" "next_js_ecs_tasks" {
-  name        = "${var.app_name}-${var.environment}-next-js-ecs-tasks-sg"
+  name        = "${local.common_name_prefix}-next-js-ecs-tasks-sg"
   description = "Security Group for Next.js ECS Tasks"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-next-js-ecs-tasks-sg"
+    Name = "${local.common_name_prefix}-next-js-ecs-tasks-sg"
   }
 }
 
@@ -254,12 +258,12 @@ resource "aws_security_group_rule" "next_js_ecs_tasks_egress_https_to_ecr_vpc_en
 
 # プライベートALBのセキュリティグループ
 resource "aws_security_group" "pri_alb" {
-  name        = "${var.app_name}-${var.environment}-pri-alb-sg"
+  name        = "${local.common_name_prefix}-pri-alb-sg"
   description = "Security Group for Private ALB"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-pri-alb-sg"
+    Name = "${local.common_name_prefix}-pri-alb-sg"
   }
 }
 
@@ -305,12 +309,12 @@ resource "aws_security_group_rule" "pri_alb_egress_https_to_go_ecs_tasks" {
 
 # Goコンテナのセキュリティグループ
 resource "aws_security_group" "go_ecs_tasks" {
-  name        = "${var.app_name}-${var.environment}-go-ecs-tasks-sg"
+  name        = "${local.common_name_prefix}-go-ecs-tasks-sg"
   description = "Security Group for Go ECS Tasks"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-go-ecs-tasks-sg"
+    Name = "${local.common_name_prefix}-go-ecs-tasks-sg"
   }
 }
 
@@ -366,12 +370,12 @@ resource "aws_security_group_rule" "go_ecs_tasks_egress_to_aurora" {
 
 # Auroraのセキュリティグループ
 resource "aws_security_group" "aurora" {
-  name        = "${var.app_name}-${var.environment}-aurora-sg"
+  name        = "${local.common_name_prefix}-aurora-sg"
   description = "Security Group for both Aurora"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-aurora-sg"
+    Name = "${local.common_name_prefix}-aurora-sg"
   }
 }
 
@@ -387,12 +391,12 @@ resource "aws_security_group_rule" "aurora_ingress_from_go_ecs_tasks" {
 
 # Secrets Manager VPC Endpointのセキュリティグループ
 resource "aws_security_group" "secrets_manager_vpc_endpoint" {
-  name        = "${var.app_name}-${var.environment}-secrets-manager-vpc-endpoint-sg"
+  name        = "${local.common_name_prefix}-secrets-manager-vpc-endpoint-sg"
   description = "Security Group for Secrets Manager VPC Endpoint"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-secrets-manager-vpc-endpoint-sg"
+    Name = "${local.common_name_prefix}-secrets-manager-vpc-endpoint-sg"
   }
 }
 
@@ -408,12 +412,12 @@ resource "aws_security_group_rule" "secrets_manager_vpc_endpoint_ingress_from_go
 
 # ECR VPC Endpointのセキュリティグループ
 resource "aws_security_group" "ecr_vpc_endpoint" {
-  name        = "${var.app_name}-${var.environment}-ecr-vpc-endpoint-sg"
+  name        = "${local.common_name_prefix}-ecr-vpc-endpoint-sg"
   description = "Security Group for ECR VPC Endpoint"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-ecr-vpc-endpoint-sg"
+    Name = "${local.common_name_prefix}-ecr-vpc-endpoint-sg"
   }
 }
 
