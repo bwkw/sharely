@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
+}
+
 resource "aws_secretsmanager_secret" "aurora_credentials" {
   name = "${var.app_name}-${var.environment}-aurora-credentials"
 

@@ -70,12 +70,6 @@ variable "pri2_sub_1c_cidr" {
   default     = "192.168.0.80/28"
 }
 
-variable "allow_ip_list" {
-  description = "List of allowed IPs for security group ingress"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-}
-
 variable "db_username" {
   description = "The database username"
   type        = string
@@ -111,6 +105,18 @@ variable "task_memory" {
   default     = "512"
 }
 
+variable "next_js_image_tag" {
+  description = "The image tag for Next.js Image"
+  type        = string
+  default     = "test"
+}
+
+variable "go_image_tag" {
+  description = "The image tag for Go Image"
+  type        = string
+  default     = "test"
+}
+
 variable "cpu_scale_up_target_value" {
   description = "Target value for CPU utilization to trigger scale up."
   type        = number
@@ -139,4 +145,25 @@ variable "autoscaling_max_capacity" {
   description = "Maximum capacity for application autoscaling."
   type        = number
   default     = 2
+}
+
+variable "iam_role_oidc_thumbprint" {
+  type    = string
+  default = "3EA80E902FC385F36BC08193FBC678202D572994"
+}
+
+variable "iam_role_github_actions" {
+  type = object({
+    repository = string
+    branch     = string
+  })
+  default = {
+    repository = "bwkw/sharely"
+    branch     = "stg"
+  }
+}
+
+variable "sts_audience" {
+  type    = string
+  default = "sts.amazonaws.com"
 }

@@ -23,34 +23,34 @@ variable "task_memory" {
   type        = string
 }
 
-variable "next_js_ecs_tasks_sub_ids" {
-  description = "List of subnet IDs for deploying the Next.js application in ECS"
-  type        = list(string)
+variable "ecs_tasks_sub_ids" {
+  description = "Map of subnets for ECS tasks"
+  type        = map(list(string))
 }
 
-variable "go_ecs_tasks_sub_ids" {
-  description = "List of subnet IDs for deploying the Go application in ECS"
-  type        = list(string)
-}
-
-variable "next_js_ecs_tasks_sg_ids" {
-  description = "List of security group IDs for deploying the Next.js application in ECS"
-  type        = list(string)
-}
-
-variable "go_ecs_tasks_sg_ids" {
-  description = "List of security group IDs for deploying the Go application in ECS"
-  type        = list(string)
+variable "ecs_tasks_sg_ids" {
+  description = "Map of security groups for ECS tasks"
+  type        = map(list(string))
 }
 
 variable "next_js_image_url" {
-  description = "ECR URL for the Next.js application"
+  description = "ECR URL for the Next.js Application"
   type        = string
 }
 
 variable "go_image_url" {
   description = "ECR URL for the Go application"
   type        = string
+}
+
+variable "next_js_image_tag" {
+  description = "ECR Image Tag for the Next.js Application"
+  type = string
+}
+
+variable "go_image_tag" {
+  description = "ECR Image Tag for the Go Application"
+  type = string
 }
 
 variable "cpu_scale_up_target_value" {

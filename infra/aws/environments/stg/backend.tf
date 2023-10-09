@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 0.13"
+
   backend "s3" {
     bucket         = "sharely-terraform-state-bucket"
     key            = "environments/stg/terraform.tfstate"

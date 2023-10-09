@@ -5,7 +5,7 @@ variable "app_name" {
 
 variable "environment" {
   description = "Environment name (e.g., 'stg', 'prod')"
-  default     = "stg"
+  type        = string
 }
 
 variable "region" {
@@ -23,7 +23,12 @@ variable "pri1_sub_ids" {
   type        = list(string)
 }
 
-variable "sg_ids" {
-  description = "List of security group IDs for the Secrets Manager VPC Endpoint"
+variable "secrets_manager_vpc_endpoint_sg_ids" {
+  description = "List of security group IDs for Secrets Manager VPC Endpoint"
+  type        = list(string)
+}
+
+variable "ecr_vpc_endpoint_sg_ids" {
+  description = "List of security group IDs for ECR VPC Endpoint"
   type        = list(string)
 }

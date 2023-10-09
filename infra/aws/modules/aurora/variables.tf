@@ -8,11 +8,6 @@ variable "environment" {
   type        = string
 }
 
-variable "vpc_id" {
-  description = "ID of the VPC where Aurora will be placed"
-  type        = string
-}
-
 variable "az_a" {
   description = "Availability Zone for the 1a subnet"
   type        = string

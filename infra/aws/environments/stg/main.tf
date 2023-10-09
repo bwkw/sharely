@@ -16,10 +16,9 @@ module "vpc" {
   pri2_sub_1a_cidr = var.pri2_sub_1a_cidr
   pri1_sub_1c_cidr = var.pri1_sub_1c_cidr
   pri2_sub_1c_cidr = var.pri2_sub_1c_cidr
-  allow_ip_list    = var.allow_ip_list
 }
 
-module "secrets_manager" {
+module "secrets-manager" {
   source = "../../modules/secrets-manager"
 
   app_name    = var.app_name
@@ -29,16 +28,17 @@ module "secrets_manager" {
   db_password = var.db_password
 }
 
-module "vpc_endpoint" {
+module "vpc-endpoint" {
   source = "../../modules/vpc-endpoint"
 
   app_name    = var.app_name
   environment = var.environment
 
-  region       = var.region
-  vpc_id       = module.vpc.vpc_id
-  pri1_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  sg_ids       = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  region                              = var.region
+  vpc_id                              = module.vpc.vpc_id
+  pri1_sub_ids                        = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
+  ecr_vpc_endpoint_sg_ids             = [module.vpc.ecr_vpc_endpoint_sg_id]
 }
 
 module "aurora" {
@@ -47,7 +47,6 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  vpc_id       = module.vpc.vpc_id
   az_a         = var.az_a
   az_c         = var.az_c
   pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
@@ -74,7 +73,10 @@ module "alb" {
 module "ecr" {
   source = "../../modules/ecr"
 
+  app_name    = var.app_name
   environment = var.environment
+
+  ecs_execution_role_arn = module.ecs.ecs_execution_role_arn
 }
 
 module "ecs" {
@@ -83,13 +85,20 @@ module "ecs" {
   app_name    = var.app_name
   environment = var.environment
 
-  next_js_ecs_tasks_sub_ids = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  go_ecs_tasks_sub_ids      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  next_js_ecs_tasks_sg_ids  = [module.vpc.next_js_ecs_tasks_sg_id]
-  go_ecs_tasks_sg_ids       = [module.vpc.go_ecs_tasks_sg_id]
+  ecs_tasks_sub_ids = {
+    next_js = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id],
+    go      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+  }
+  ecs_tasks_sg_ids = {
+    next_js = [module.vpc.next_js_ecs_tasks_sg_id],
+    go      = [module.vpc.go_ecs_tasks_sg_id]
+  }
 
   next_js_image_url = module.ecr.next_js_repository_url
   go_image_url      = module.ecr.go_repository_url
+
+  next_js_image_tag = var.next_js_image_tag
+  go_image_tag      = var.go_image_tag
 
   pub_alb_tg_arn = module.alb.pub_alb_tg_arn
   pri_alb_tg_arn = module.alb.pri_alb_tg_arn
@@ -103,3 +112,16 @@ module "ecs" {
   autoscaling_min_capacity  = var.autoscaling_min_capacity
   autoscaling_max_capacity  = var.autoscaling_max_capacity
 }
+
+module "oidc" {
+  source = "../../modules/oidc"
+
+  app_name    = var.app_name
+  environment = var.environment
+
+  ecr_repository_arns = module.ecr.repository_arns
+  oidc_thumbprint     = var.iam_role_oidc_thumbprint
+  github_actions      = var.iam_role_github_actions
+  sts_audience        = var.sts_audience
+}
+

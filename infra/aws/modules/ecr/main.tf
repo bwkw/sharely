@@ -1,11 +1,22 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
+}
+
 locals {
   apps = {
     next_js = {
-      name: "next-js-front-app",
+      name: "${var.app_name}-${var.environment}-next-js-front-app",
       description: "Keep only 10 images for Next.js frontend app"
     },
     go = {
-      name: "go-backend-app",
+      name: "${var.app_name}-${var.environment}-go-backend-app",
       description: "Keep only 10 images for Go backend app"
     }
   }
@@ -24,7 +35,6 @@ resource "aws_ecr_repository" "app" {
 
 resource "aws_ecr_lifecycle_policy" "app" {
   for_each = local.apps
-
   repository = aws_ecr_repository.app[each.key].name
 
   policy = jsonencode({
@@ -40,6 +50,29 @@ resource "aws_ecr_lifecycle_policy" "app" {
         action = {
           type = "expire"
         }
+      }
+    ]
+  })
+}
+
+resource "aws_ecr_repository_policy" "ecs" {
+  for_each = local.apps
+  repository = aws_ecr_repository.app[each.key].name
+
+  policy = jsonencode({
+    Version = "2008-10-17",
+    Statement = [
+      {
+        Sid       = "AllowEcsTasksToPullImages",
+        Effect    = "Allow",
+        Principal = {
+          AWS = var.ecs_execution_role_arn
+        },
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability"
+        ]
       }
     ]
   })

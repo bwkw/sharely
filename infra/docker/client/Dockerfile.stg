@@ -1,0 +1,29 @@
+# ビルドステージ
+FROM node:20-slim AS build
+
+WORKDIR /client
+
+COPY package.json yarn.lock ./
+RUN yarn install --prod --frozen-lockfile
+
+COPY . .
+
+RUN yarn build
+
+# 実行ステージ
+FROM node:20-slim
+
+RUN useradd -ms /bin/bash nonroot
+
+WORKDIR /
+
+COPY --from=build /client/package.json ./package.json
+COPY --from=build /client/node_modules ./node_modules
+COPY --from=build /client/.next ./.next
+COPY --from=build /client/app ./app
+COPY --from=build /client/public ./public
+
+ENV NODE_ENV production
+USER nonroot:nonroot
+
+CMD ["yarn", "start"]

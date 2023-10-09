@@ -1,11 +1,27 @@
-# 共通のクラスタ
-resource "aws_ecs_cluster" "main" {
-  name = "${var.app_name}-${var.environment}-cluster"
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
+    }
+  }
 }
 
-# ECS実行ロール
+locals {
+  common_cluster_name = "${var.app_name}-${var.environment}-cluster"
+  common_execution_role_name = "${var.app_name}-${var.environment}-ecs-execution-role"
+  common_cpu = var.task_cpu
+  common_memory = var.task_memory
+}
+
+resource "aws_ecs_cluster" "main" {
+  name = local.common_cluster_name
+}
+
 resource "aws_iam_role" "ecs_execution_role" {
-  name               = "${var.app_name}-${var.environment}-ecs-execution-role"
+  name               = local.common_execution_role_name
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -21,134 +37,108 @@ resource "aws_iam_role" "ecs_execution_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachment" {
-  role       = aws_iam_role.ecs_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_execution_ecr_read" {
-  role       = aws_iam_role.ecs_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-# Next.js サービス定義
-resource "aws_ecs_service" "next_js" {
-  name            = "next-js-service"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.next_js.arn
-  launch_type     = "FARGATE"
-  desired_count   = var.desired_count
-
-  network_configuration {
-    subnets          = var.next_js_ecs_tasks_sub_ids
-    security_groups  = var.next_js_ecs_tasks_sg_ids
-    assign_public_ip = true
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachments" {
+  for_each = {
+    task_execution = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+    ecr_read      = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   }
 
-  load_balancer {
-    target_group_arn = var.pub_alb_tg_arn
-    container_name   = "${var.app_name}-${var.environment}-next-js-container"
-    container_port   = 80 
-  }
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = each.value
 }
 
-# Next.js タスク定義
-resource "aws_ecs_task_definition" "next_js" {
-  family                   = "next-js-task-definition"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = var.task_cpu
-  memory                   = var.task_memory
-  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
-
-  container_definitions = jsonencode([{
-    name  = "${var.app_name}-${var.environment}-next-js-container"
-    image = var.next_js_image_url
-    port = 80
-    memory = 512
-  }])
-}
-
-# Next.js タスクのオートスケーリング
-resource "aws_appautoscaling_target" "next_js" {
-  service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.next_js.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
-
-  min_capacity = var.autoscaling_min_capacity
-  max_capacity = var.autoscaling_max_capacity
-}
-
-resource "aws_appautoscaling_policy" "next_js_cpu_scale_up" {
-  name               = "cpu-scale-up"
-  service_namespace  = aws_appautoscaling_target.next_js.service_namespace
-  scalable_dimension = aws_appautoscaling_target.next_js.scalable_dimension
-  resource_id        = aws_appautoscaling_target.next_js.resource_id
-  policy_type        = "TargetTrackingScaling"
-
-  target_tracking_scaling_policy_configuration {
-    target_value       = var.cpu_scale_up_target_value
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+resource "aws_ecs_service" "service" {
+  for_each = {
+    next_js = {
+      task_definition = aws_ecs_task_definition.task["next_js"].arn
+      alb_tg_arn = var.pub_alb_tg_arn
+      container_name_suffix = "next-js-container"
+    },
+    go = {
+      task_definition = aws_ecs_task_definition.task["go"].arn
+      alb_tg_arn = var.pri_alb_tg_arn
+      container_name_suffix = "go-container"
     }
-
-    scale_out_cooldown = var.scale_out_cooldown
-    scale_in_cooldown  = var.scale_in_cooldown
   }
-}
-
-# Go サービス定義
-resource "aws_ecs_service" "go" {
-  name            = "go-service"
+  name            = "${each.key}-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.go.arn
+  task_definition = each.value.task_definition
   launch_type     = "FARGATE"
   desired_count   = var.desired_count
 
   network_configuration {
-    subnets          = var.go_ecs_tasks_sub_ids
-    security_groups  = var.go_ecs_tasks_sg_ids
+    subnets          = var.ecs_tasks_sub_ids[each.key]
+    security_groups  = var.ecs_tasks_sg_ids[each.key]
+    assign_public_ip = false
   }
 
   load_balancer {
-    target_group_arn = var.pri_alb_tg_arn
-    container_name   = "${var.app_name}-${var.environment}-go-container"
+    target_group_arn = each.value.alb_tg_arn
+    container_name   = "${var.app_name}-${var.environment}-${each.value.container_name_suffix}"
     container_port   = 80 
   }
 }
 
-# Go タスク定義
-resource "aws_ecs_task_definition" "go" {
-  family                   = "go-task-definition"
+resource "aws_ecs_task_definition" "task" {
+  for_each = {
+    next_js = {
+      image_url = var.next_js_image_url
+      image_tag = var.next_js_image_tag
+      container_name_suffix = "next-js-container"
+    },
+    go = {
+      image_url = var.go_image_url
+      image_tag = var.go_image_tag
+      container_name_suffix = "go-container"
+    }
+  }
+
+  family                   = "${each.key}-task-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = var.task_cpu
-  memory                   = var.task_memory
+  cpu                      = local.common_cpu
+  memory                   = local.common_memory
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
 
   container_definitions = jsonencode([{
-    name  = "${var.app_name}-${var.environment}-go-container"
-    image = var.go_image_url
-    port = 80
+    name  = "${var.app_name}-${var.environment}-${each.value.container_name_suffix}"
+    image = "${each.value.image_url}:${each.value.image_tag}"
     memory = 512
+    portMappings = [{
+      containerPort = 80
+      hostPort      = 80
+    }]
   }])
+#  runtime_platform {
+#    operating_system_family = "LINUX"
+#    cpu_architecture = "ARM64"
+#  }
 }
 
-# Go タスクのオートスケーリング
-resource "aws_appautoscaling_target" "go" {
+resource "aws_appautoscaling_target" "target" {
+  for_each = {
+    next_js = aws_ecs_service.service["next_js"].name
+    go = aws_ecs_service.service["go"].name
+  }
+
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.go.name}"
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${each.value}"
   scalable_dimension = "ecs:service:DesiredCount"
 
   min_capacity = var.autoscaling_min_capacity
   max_capacity = var.autoscaling_max_capacity
 }
 
-resource "aws_appautoscaling_policy" "go_cpu_scale_up" {
+resource "aws_appautoscaling_policy" "policy" {
+  for_each = {
+    next_js = aws_appautoscaling_target.target["next_js"]
+    go = aws_appautoscaling_target.target["go"]
+  }
+
   name               = "cpu-scale-up"
-  service_namespace  = aws_appautoscaling_target.go.service_namespace
-  scalable_dimension = aws_appautoscaling_target.go.scalable_dimension
-  resource_id        = aws_appautoscaling_target.go.resource_id
+  service_namespace  = each.value.service_namespace
+  scalable_dimension = each.value.scalable_dimension
+  resource_id        = each.value.resource_id
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {

@@ -53,7 +53,3 @@ variable "pri2_sub_1c_cidr" {
   type        = string
 }
 
-variable "allow_ip_list" {
-  description = "List of allowed IPs for security group ingress"
-  type        = list(string)
-}
