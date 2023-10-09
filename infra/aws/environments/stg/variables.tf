@@ -148,10 +148,15 @@ variable "autoscaling_max_capacity" {
 }
 
 variable "iam_role_oidc_thumbprint" {
+  type    = string
   default = "3EA80E902FC385F36BC08193FBC678202D572994"
 }
 
 variable "iam_role_github_actions" {
+  type = object({
+    repository = string
+    branch     = string
+  })
   default = {
     repository = "bwkw/sharely"
     branch     = "stg"
