@@ -154,7 +154,7 @@ variable "iam_role_oidc_thumbprint" {
 variable "iam_role_github_actions" {
   default = {
     repository = "bwkw/sharely"
-    branch     = "feature/#46/add-automatic-deploy-when-merged-to-stg-branch"
+    branch     = "stg"
   }
 }
 

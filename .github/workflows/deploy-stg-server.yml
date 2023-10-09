@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - feature/#46/add-automatic-deploy-when-merged-to-stg-branch
+      - stg
 
 jobs:
   build-and-push:
