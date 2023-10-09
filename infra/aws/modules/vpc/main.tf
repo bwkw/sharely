@@ -11,6 +11,50 @@ terraform {
 
 locals {
   common_name_prefix = "${var.app_name}-${var.environment}"
+
+  subnets = {
+    pub_1a = {
+      cidr_block              = var.pub_subnets.a
+      availability_zone       = var.az.a
+      map_public_ip_on_launch = true
+      subnet_type             = "public"
+    },
+    pub_1c = {
+      cidr_block              = var.pub_subnets.c
+      availability_zone       = var.az.c
+      map_public_ip_on_launch = true
+      subnet_type             = "public"
+    },
+    pri1_1a = {
+      cidr_block              = var.pri1_subnets.a
+      availability_zone       = var.az.a
+      map_public_ip_on_launch = false
+      subnet_type             = "private"
+    },
+    pri1_1c = {
+      cidr_block              = var.pri1_subnets.c
+      availability_zone       = var.az.c
+      map_public_ip_on_launch = false
+      subnet_type             = "private"
+    },
+    pri2_1a = {
+      cidr_block              = var.pri2_subnets.a
+      availability_zone       = var.az.a
+      map_public_ip_on_launch = false
+      subnet_type             = "private"
+    },
+    pri2_1c = {
+      cidr_block              = var.pri2_subnets.c
+      availability_zone       = var.az.c
+      map_public_ip_on_launch = false
+      subnet_type             = "private"
+    }
+  }
+
+  route_table_associations = {
+    pub = ["pub_1a", "pub_1c"],
+    pri = ["pri1_1a", "pri1_1c", "pri2_1a", "pri2_1c"]
+  }
 }
 
 resource "aws_vpc" "main" {
@@ -23,66 +67,16 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "pub_1a" {
+resource "aws_subnet" "common" {
+  for_each = local.subnets
+
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.pub_subnets.a
-  availability_zone       = var.az.a
-  map_public_ip_on_launch = true
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
+  map_public_ip_on_launch = each.value.map_public_ip_on_launch
 
   tags = {
-    Name = "${local.common_name_prefix}-pub-1a-sub"
-  }
-}
-
-resource "aws_subnet" "pub_1c" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.pub_subnets.c
-  availability_zone       = var.az.c
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "${local.common_name_prefix}-pub-1c-sub"
-  }
-}
-
-resource "aws_subnet" "pri1_1a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri1_subnets.a
-  availability_zone = var.az.a
-
-  tags = {
-    Name = "${local.common_name_prefix}-pri1-1a-sub"
-  }
-}
-
-resource "aws_subnet" "pri2_1a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri2_subnets.a
-  availability_zone = var.az.a
-
-  tags = {
-    Name = "${local.common_name_prefix}-pri2-1a-sub"
-  }
-}
-
-# Private Subnets for 1c
-resource "aws_subnet" "pri1_1c" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri1_subnets.c
-  availability_zone = var.az.c
-  
-  tags = {
-    Name = "${local.common_name_prefix}-pri1-1c-sub"
-  }
-}
-
-resource "aws_subnet" "pri2_1c" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.pri2_subnets.c
-  availability_zone = var.az.c
-  
-  tags = {
-    Name = "${local.common_name_prefix}-pri2-1c-sub"
+    Name = "${local.common_name_prefix}-${each.key}-sub"
   }
 }
 
@@ -106,16 +100,6 @@ resource "aws_route_table" "pub" {
   }
 }
 
-resource "aws_route_table_association" "pub_rt_associate_1a" {
-  subnet_id      = aws_subnet.pub_1a.id
-  route_table_id = aws_route_table.pub.id
-}
-
-resource "aws_route_table_association" "pub_rt_associate_1c" {
-  subnet_id      = aws_subnet.pub_1c.id
-  route_table_id = aws_route_table.pub.id
-}
-
 resource "aws_route_table" "pri" {
   vpc_id = aws_vpc.main.id
   
@@ -124,23 +108,17 @@ resource "aws_route_table" "pri" {
   }
 }
 
-resource "aws_route_table_association" "pri1_rt_associate_1a" {
-  subnet_id      = aws_subnet.pri1_1a.id
-  route_table_id = aws_route_table.pri.id
+resource "aws_route_table_association" "pub" {
+  for_each = toset(local.route_table_associations.pub)
+
+  subnet_id      = aws_subnet.common[each.key].id
+  route_table_id = aws_route_table.pub.id
 }
 
-resource "aws_route_table_association" "pri1_rt_associate_1c" {
-  subnet_id      = aws_subnet.pri1_1c.id
-  route_table_id = aws_route_table.pri.id
-}
+resource "aws_route_table_association" "pri" {
+  for_each = toset(local.route_table_associations.pri)
 
-resource "aws_route_table_association" "pri2_rt_associate_1a" {
-  subnet_id      = aws_subnet.pri2_1a.id
-  route_table_id = aws_route_table.pri.id
-}
-
-resource "aws_route_table_association" "pri2_rt_associate_1c" {
-  subnet_id      = aws_subnet.pri2_1c.id
+  subnet_id      = aws_subnet.common[each.key].id
   route_table_id = aws_route_table.pri.id
 }
 
