@@ -4,18 +4,11 @@ module "vpc" {
   app_name    = var.app_name
   environment = var.environment
 
-  vpc_cidr = var.vpc_cidr
-
-  az_a = var.az_a
-  az_c = var.az_c
-
-  pub_sub_1a_cidr = var.pub_sub_1a_cidr
-  pub_sub_1c_cidr = var.pub_sub_1c_cidr
-
-  pri1_sub_1a_cidr = var.pri1_sub_1a_cidr
-  pri2_sub_1a_cidr = var.pri2_sub_1a_cidr
-  pri1_sub_1c_cidr = var.pri1_sub_1c_cidr
-  pri2_sub_1c_cidr = var.pri2_sub_1c_cidr
+  vpc_cidr     = var.vpc_cidr
+  az           = var.az
+  pub_subnets  = var.pub_subnets
+  pri1_subnets = var.pri1_subnets
+  pri2_subnets = var.pri2_subnets
 }
 
 module "secrets-manager" {
@@ -47,8 +40,8 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  az_a         = var.az_a
-  az_c         = var.az_c
+  az_a         = var.az.a
+  az_c         = var.az.c
   pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
   sg_ids       = [module.vpc.aurora_sg_id]
 
