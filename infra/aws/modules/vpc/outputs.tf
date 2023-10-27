@@ -1,69 +1,21 @@
 output "vpc_id" {
   value       = aws_vpc.main.id
-  description = "ID of the created VPC"
 }
 
-output "pub_sub_1a_id" {
-  value       = aws_subnet.pub_1a.id
-  description = "ID of the first created public subnet in AZ 1a"
+output "subnets" {
+  value = {
+    for key, subnet in aws_subnet.common : key => subnet.id
+  }
 }
 
-output "pub_sub_1c_id" {
-  value       = aws_subnet.pub_1c.id
-  description = "ID of the first created public subnet in AZ 1c"
-}
-
-output "pri1_sub_1a_id" {
-  value       = aws_subnet.pri1_1a.id
-  description = "ID of the first created private subnet in AZ 1a"
-}
-
-output "pri1_sub_1c_id" {
-  value       = aws_subnet.pri1_1c.id
-  description = "ID of the first created private subnet in AZ 1c"
-}
-
-output "pri2_sub_1a_id" {
-  value       = aws_subnet.pri2_1a.id
-  description = "ID of the second created private subnet in AZ 1a"
-}
-
-output "pri2_sub_1c_id" {
-  value       = aws_subnet.pri2_1c.id
-  description = "ID of the second created private subnet in AZ 1c"
-}
-
-output "pub_alb_sg_id" {
-  description = "The ID of the security group for Public ALB"
-  value       = aws_security_group.pub_alb.id
-}
-
-output "next_js_ecs_tasks_sg_id" {
-  description = "The ID of the security group for Next.js ECS Tasks"
-  value       = aws_security_group.next_js_ecs_tasks.id
-}
-
-output "pri_alb_sg_id" {
-  description = "The ID of the security group for Private ALB"
-  value       = aws_security_group.pri_alb.id
-}
-
-output "go_ecs_tasks_sg_id" {
-  description = "The ID of the security group for Go ECS Tasks"
-  value       = aws_security_group.go_ecs_tasks.id
-}
-
-output "aurora_sg_id" {
-  description = "The ID of the security group for Aurora"
-  value       = aws_security_group.aurora.id
-}
-
-output "secrets_manager_vpc_endpoint_sg_id" {
-  description = "The ID of the security group for Secrets Manager VPC Endpoint"
-  value       = aws_security_group.secrets_manager_vpc_endpoint.id
-}
-
-output "ecr_vpc_endpoint_sg_id" {
-  description = "The ID of the security group for ECR VPC Endpoint"
-  value       = aws_security_group.ecr_vpc_endpoint.id
+output "security_groups" {
+  value = {
+    pub_alb                     = aws_security_group.pub_alb.id,
+    frontend_ecs_tasks           = aws_security_group.frontend_ecs_tasks.id
+    pri_alb                     = aws_security_group.pri_alb.id,
+    backend_ecs_tasks                = aws_security_group.backend_ecs_tasks.id
+    aurora                      = aws_security_group.aurora.id,
+    secrets_manager_vpc_endpoint = aws_security_group.secrets_manager_vpc_endpoint.id,
+    ecr_vpc_endpoint            = aws_security_group.ecr_vpc_endpoint.id
+  }
 }

@@ -4,18 +4,11 @@ module "vpc" {
   app_name    = var.app_name
   environment = var.environment
 
-  vpc_cidr = var.vpc_cidr
-
-  az_a = var.az_a
-  az_c = var.az_c
-
-  pub_sub_1a_cidr = var.pub_sub_1a_cidr
-  pub_sub_1c_cidr = var.pub_sub_1c_cidr
-
-  pri1_sub_1a_cidr = var.pri1_sub_1a_cidr
-  pri2_sub_1a_cidr = var.pri2_sub_1a_cidr
-  pri1_sub_1c_cidr = var.pri1_sub_1c_cidr
-  pri2_sub_1c_cidr = var.pri2_sub_1c_cidr
+  vpc_cidr     = var.vpc_cidr
+  az           = var.az
+  pub_subnets  = var.pub_subnets
+  pri1_subnets = var.pri1_subnets
+  pri2_subnets = var.pri2_subnets
 }
 
 module "secrets-manager" {
@@ -36,9 +29,9 @@ module "vpc-endpoint" {
 
   region                              = var.region
   vpc_id                              = module.vpc.vpc_id
-  pri1_sub_ids                        = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.secrets_manager_vpc_endpoint_sg_id]
-  ecr_vpc_endpoint_sg_ids             = [module.vpc.ecr_vpc_endpoint_sg_id]
+  pri1_sub_ids                        = module.vpc.subnets["pri1"]
+  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_groups["secrets_manager_vpc_endpoint"]]
+  ecr_vpc_endpoint_sg_ids             = [module.vpc.security_groups["ecr_vpc_endpoint"]]
 }
 
 module "aurora" {
@@ -47,10 +40,10 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  az_a         = var.az_a
-  az_c         = var.az_c
-  pri2_sub_ids = [module.vpc.pri2_sub_1a_id, module.vpc.pri2_sub_1c_id]
-  sg_ids       = [module.vpc.aurora_sg_id]
+  az_a         = var.az.a
+  az_c         = var.az.c
+  pri2_sub_ids = module.vpc.subnets["pri2"]
+  sg_ids       = [module.vpc.security_groups["aurora"]]
 
   instance_class = var.instance_class
   db_username    = var.db_username
@@ -64,10 +57,10 @@ module "alb" {
   app_name    = var.app_name
 
   vpc_id          = module.vpc.vpc_id
-  pub_sub_ids     = [module.vpc.pub_sub_1a_id, module.vpc.pub_sub_1c_id]
-  pub_alb_sg_ids  = [module.vpc.pub_alb_sg_id]
-  pri1_sub_ids    = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
-  pri1_alb_sg_ids = [module.vpc.pri_alb_sg_id]
+  pub_sub_ids     = module.vpc.subnets["pub"]
+  pub_alb_sg_ids  = [module.vpc.security_groups["pub_alb"]]
+  pri1_sub_ids    = module.vpc.subnets["pri1"]
+  pri1_alb_sg_ids = [module.vpc.security_groups["pri_alb"]]
 }
 
 module "ecr" {
@@ -86,12 +79,12 @@ module "ecs" {
   environment = var.environment
 
   ecs_tasks_sub_ids = {
-    next_js = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id],
-    go      = [module.vpc.pri1_sub_1a_id, module.vpc.pri1_sub_1c_id]
+    next_js = module.vpc.subnets["pri1"],
+    go      = module.vpc.subnets["pri1"]
   }
   ecs_tasks_sg_ids = {
-    next_js = [module.vpc.next_js_ecs_tasks_sg_id],
-    go      = [module.vpc.go_ecs_tasks_sg_id]
+    next_js = [module.vpc.security_groups["next_js_ecs_tasks"]],
+    go      = [module.vpc.security_groups["go_ecs_tasks"]]
   }
 
   next_js_image_url = module.ecr.next_js_repository_url
@@ -124,4 +117,3 @@ module "oidc" {
   github_actions      = var.iam_role_github_actions
   sts_audience        = var.sts_audience
 }
-
