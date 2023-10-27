@@ -16,32 +16,32 @@ Calendar
 
 ## DB configuration
 
-1. **users テーブル**
+- **users テーブル**
 
-| Column     | Type     | Constraints        | Description                               |
-| ---------- | -------- | ------------------ | ----------------------------------------- |
-| id         | int      | PK, Auto Increment | ユーザーの一意な ID                       |
+| Column     | Type     | Constraints        | Description                   |
+|------------|----------|--------------------|-------------------------------|
+| id         | int      | PK, Auto Increment | ユーザーの一意な ID                   |
 | sex        | int      | Not Null           | ユーザーの性別（0: male、1: female など） |
-| name       | varchar  | Not Null, Unique   | ユーザーの名前                            |
+| name       | varchar  | Not Null, Unique   | ユーザーの名前                       |
 | email      | varchar  | Not Null, Unique   | ユーザーの E メールアドレス               |
-| password   | varchar  | Not Null           | ユーザーのパスワード                      |
-| image      | varchar  |                    | ユーザーの画像の URL またはパス           |
+| password   | varchar  | Not Null           | ユーザーのパスワード                    |
+| image      | varchar  |                    | ユーザーの画像の URL またはパス            |
 | created_at | datetime |                    | レコードが作成された日時                  |
-| updated_at | datetime |                    | レコードが最後に更新された日時            |
+| updated_at | datetime |                    | レコードが最後に更新された日時               |
 
-2. **groups テーブル**
+- **groups テーブル**
 
-| Column      | Type     | Constraints        | Description                     |
-| ----------- | -------- | ------------------ | ------------------------------- |
-| id          | int      | PK, Auto Increment | グループの一意な ID             |
-| name        | varchar  | Not Null           | グループの名前                  |
-| description | text     |                    | グループの説明                  |
-| image       | varchar  |                    | グループの画像の URL            |
+| Column      | Type     | Constraints        | Description       |
+|-------------|----------|--------------------|-------------------|
+| id          | int      | PK, Auto Increment | グループの一意な ID       |
+| name        | varchar  | Not Null           | グループの名前           |
+| description | text     |                    | グループの説明           |
+| image       | varchar  |                    | グループの画像の URL      |
 | creator_id  | int      | FK, Not Null       | グループを作成したユーザーの ID |
-| created_at  | datetime |                    | レコードが作成された日時        |
-| updated_at  | datetime |                    | レコードが最後に更新された日時  |
+| created_at  | datetime |                    | レコードが作成された日時      |
+| updated_at  | datetime |                    | レコードが最後に更新された日時   |
 
-3. **user_group テーブル**
+- **user_group テーブル**
 
 | Column     | Type     | Constraints      | Description                    |
 | ---------- | -------- | ---------------- | ------------------------------ |
@@ -50,51 +50,51 @@ Calendar
 | created_at | datetime |                  | レコードが作成された日時       |
 | updated_at | datetime |                  | レコードが最後に更新された日時 |
 
-4. **schedules テーブル**
+- **schedules テーブル**
 
-| Column          | Type     | Constraints        | Description                                              |
-| --------------- | -------- | ------------------ | -------------------------------------------------------- |
-| id              | int      | PK, Auto Increment | スケジュールの一意な ID                                  |
-| title           | varchar  | Not Null           | スケジュールのタイトル                                   |
-| description     | text     |                    | スケジュールの説明                                       |
-| start_datetime  | datetime | Not Null           | スケジュールの開始日時                                   |
-| end_datetime    | datetime | Not Null           | スケジュールの終了日時                                   |
-| is_repeated     | boolean  | Not Null           | スケジュールが定期的かどうか                             |
-| is_shared_to_gc | boolean  | Not Null           | スケジュールが Google Calendar に共有されたか            |
+| Column          | Type     | Constraints        | Description                         |
+|-----------------|----------|--------------------|-------------------------------------|
+| id              | int      | PK, Auto Increment | スケジュールの一意な ID                       |
+| title           | varchar  | Not Null           | スケジュールのタイトル                         |
+| description     | text     |                    | スケジュールの説明                           |
+| start_datetime  | datetime | Not Null           | スケジュールの開始日時                         |
+| end_datetime    | datetime | Not Null           | スケジュールの終了日時                         |
+| is_repeated     | boolean  | Not Null           | スケジュールが定期的かどうか                      |
+| is_shared_to_gc | boolean  | Not Null           | スケジュールが Google Calendar に共有されたか     |
 | color           | int      | Not Null           | スケジュールを表示する色のコード（0: red、1: blue など） |
-| user_id         | int      | FK, Not Null       | スケジュールを作成したユーザー ID                        |
-| group_id        | int      | FK, Not Null       | スケジュールが作成されたグループ ID                      |
-| created_at      | datetime |                    | レコードが作成された日時                                 |
-| updated_at      | datetime |                    | レコードが最後に更新された日時                           |
+| user_id         | int      | FK, Not Null       | スケジュールを作成したユーザー ID                  |
+| group_id        | int      | FK, Not Null       | スケジュールが作成されたグループ ID                 |
+| created_at      | datetime |                    | レコードが作成された日時                        |
+| updated_at      | datetime |                    | レコードが最後に更新された日時                     |
 
-5. **google_calendar_sync_statuses テーブル**
+- **google_calendar_sync_statuses テーブル**
 
-| Column          | Type     | Constraints        | Description                                              |
-| --------------- | -------- | ------------------ | -------------------------------------------------------- |
-| id              | int      | PK, Auto Increment | 同期状態の一意な ID                                      |
-| user_id         | int      | FK, Not Null       | ユーザー ID                                              |
-| schedule_id     | int      | FK, Not Null       | スケジュール ID                                          |
+| Column          | Type     | Constraints        | Description                      |
+|-----------------|----------|--------------------|----------------------------------|
+| id              | int      | PK, Auto Increment | 同期状態の一意な ID                      |
+| user_id         | int      | FK, Not Null       | ユーザー ID                          |
+| schedule_id     | int      | FK, Not Null       | スケジュール ID                        |
 | is_synced_to_gc | boolean  | Not Null           | スケジュールが Google カレンダーと同期されているかどうか |
-| last_synced_at  | datetime |                    | 最後に同期した日時                                       |
-| created_at      | datetime |                    | レコードが作成された日時                                 |
-| updated_at      | datetime |                    | レコードが最後に更新された日時                           |
+| last_synced_at  | datetime |                    | 最後に同期した日時                        |
+| created_at      | datetime |                    | レコードが作成された日時                     |
+| updated_at      | datetime |                    | レコードが最後に更新された日時                  |
 
-6. **invitations テーブル**
+- **invitations テーブル**
 
-| Column      | Type     | Constraints        | Description                    |
-| ----------- | -------- | ------------------ | ------------------------------ |
-| id          | int      | PK, Auto Increment | 招待の一意な ID                |
-| sender_id   | int      | FK, Not Null       | 招待を送ったユーザー ID        |
-| receiver_id | int      | FK, Not Null       | 招待を受けたユーザー ID        |
-| group_id    | int      | FK, Not Null       | 招待が関連するグループ ID      |
-| created_at  | datetime |                    | レコードが作成された日時       |
+| Column      | Type     | Constraints        | Description     |
+|-------------|----------|--------------------|-----------------|
+| id          | int      | PK, Auto Increment | 招待の一意な ID       |
+| sender_id   | int      | FK, Not Null       | 招待を送ったユーザー ID   |
+| receiver_id | int      | FK, Not Null       | 招待を受けたユーザー ID   |
+| group_id    | int      | FK, Not Null       | 招待が関連するグループ ID  |
+| created_at  | datetime |                    | レコードが作成された日時    |
 | updated_at  | datetime |                    | レコードが最後に更新された日時 |
 
 ## How to start Go http server
 
 1. Run docker container
 
-```
+```shell
 $ docker compose up -d --build
 ```
 
@@ -102,19 +102,19 @@ $ docker compose up -d --build
 
 1. Create symbolic link
 
-```
+```shell
 (~/infra/aws/environments/stg) ln -s provider.tf ../../provider.tf
 ```
 
 2. Create S3 bucket for terraform backend
 
-```
+```shell
 aws s3api create-bucket --bucket sharely-terraform-state-bucket --region ap-northeast-1 --create-bucket-configuration LocationConstraint=ap-northeast-1
 ```
 
 3. Create Dynamo DB for terraform backend rock
 
-```
+```shell
 aws dynamodb create-table --table-name sharely-terraform-up-and-running-locks \
   --attribute-definitions AttributeName=LockID,AttributeType=S \
   --key-schema AttributeName=LockID,KeyType=HASH \
@@ -124,19 +124,19 @@ aws dynamodb create-table --table-name sharely-terraform-up-and-running-locks \
 
 4. Terraform init
 
-```
+```shell
 (~/infra/aws/environments/stg) terraform init
 ```
 
 5. Encrypt s3 bucket
 
-```
+```shell
 aws s3api put-bucket-encryption --bucket sharely-terraform-state-bucket --server-side-encryption-configuration '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
 ```
 
 6. Set Versioning to s3 bucket
 
-```
+```shell
 aws s3api put-bucket-versioning --bucket sharely-terraform-state-bucket --versioning-configuration Status=Enabled
 ```
 
@@ -146,36 +146,42 @@ aws s3api put-bucket-versioning --bucket sharely-terraform-state-bucket --versio
 
 - Format tf file
 
-```
+```shell
 terraform fmt
 ```
 
 - Validate tf file
 
-```
+```shell
 terraform validate
+```
+
+- Lint tf file
+
+```shell
+tflint
 ```
 
 - Create Terraform document
 
-```
+```shell
 terraform-docs markdown table --output-file README.md .
 ```
 
 - Check what will be created
 
-```
+```shell
 terraform plan
 ```
 
 - Create resource
 
-```
+```shell
 AWS_PROFILE=sharely terraform apply -var-file="stg.tfvars"
 ```
 
 - Delete resource
 
-```
+```shell
 AWS_PROFILE=sharely terraform destroy -var-file="stg.tfvars"
 ```
