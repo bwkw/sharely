@@ -9,47 +9,38 @@ terraform {
   }
 }
 
-# ---------------------------
-# Aurora RDS Cluster
-# ---------------------------
-resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier      = "${var.app_name}-${var.environment}-aurora-cluster"
+locals {
+  common_name_prefix = "${var.app_name}-${var.environment}"
+}
+
+resource "aws_rds_cluster" "aurora" {
+  cluster_identifier      = "${local.common_name_prefix}-aurora-cluster"
   engine                  = "aurora-mysql"
   database_name           = "${var.app_name}${var.environment}"
-  master_username         = var.db_username
-  master_password         = var.db_password
+  master_username         = var.database.db_username
+  master_password         = var.database.db_password
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
   skip_final_snapshot     = true
   vpc_security_group_ids  = var.sg_ids
   db_subnet_group_name    = aws_db_subnet_group.aurora.name
-  availability_zones      = [var.az_a, var.az_c]
+  availability_zones      = [var.az.a, var.az.c]
 }
 
-resource "aws_rds_cluster_instance" "aurora_instance_1a" {
-  identifier         = "${var.app_name}-${var.environment}-aurora-instance-1a"
-  cluster_identifier = aws_rds_cluster.aurora_cluster.id
-  instance_class     = var.instance_class
-  availability_zone  = var.az_a
-  engine = "aurora-mysql"
+resource "aws_rds_cluster_instance" "aurora" {
+  for_each          = var.az
+  identifier        = "${local.common_name_prefix}-aurora-instance-${each.key}"
+  cluster_identifier= aws_rds_cluster.aurora.id
+  instance_class    = var.database.instance_class
+  availability_zone = each.value
+  engine            = "aurora-mysql"
 }
 
-resource "aws_rds_cluster_instance" "aurora_instance_1c" {
-  identifier         = "${var.app_name}-${var.environment}-aurora-instance-1c"
-  cluster_identifier = aws_rds_cluster.aurora_cluster.id
-  instance_class     = var.instance_class
-  availability_zone  = var.az_c
-  engine = "aurora-mysql"
-}
-
-# ---------------------------
-# DB Subnet Group
-# ---------------------------
 resource "aws_db_subnet_group" "aurora" {
-  name       = "${var.app_name}-${var.environment}-aurora-subnet-group"
+  name       = "${local.common_name_prefix}-aurora-subnet-group"
   subnet_ids = var.pri2_sub_ids
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-aurora-subnet-group"
+    Name = "${local.common_name_prefix}-aurora-subnet-group"
   }
 }
