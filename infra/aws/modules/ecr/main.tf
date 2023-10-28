@@ -10,20 +10,20 @@ terraform {
 }
 
 locals {
-  apps = {
-    next_js = {
-      name: "${var.app_name}-${var.environment}-next-js-front-app",
-      description: "Keep only 10 images for Next.js frontend app"
+  ecr_repositories = {
+    frontend = {
+      name: "${var.app_name}-${var.environment}-front-app",
+      description: "Keep only 10 images for frontend app"
     },
-    go = {
-      name: "${var.app_name}-${var.environment}-go-backend-app",
-      description: "Keep only 10 images for Go backend app"
+    backend = {
+      name: "${var.app_name}-${var.environment}-backend-app",
+      description: "Keep only 10 images for backend app"
     }
   }
 }
 
-resource "aws_ecr_repository" "app" {
-  for_each = local.apps
+resource "aws_ecr_repository" "common" {
+  for_each = local.ecr_repositories
 
   name = each.value.name
 
@@ -33,10 +33,10 @@ resource "aws_ecr_repository" "app" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "app" {
-  for_each = local.apps
-  repository = aws_ecr_repository.app[each.key].name
+resource "aws_ecr_lifecycle_policy" "common" {
+  for_each = local.ecr_repositories
 
+  repository = aws_ecr_repository.common[each.key].name
   policy = jsonencode({
     rules = [
       {
@@ -50,29 +50,6 @@ resource "aws_ecr_lifecycle_policy" "app" {
         action = {
           type = "expire"
         }
-      }
-    ]
-  })
-}
-
-resource "aws_ecr_repository_policy" "ecs" {
-  for_each = local.apps
-  repository = aws_ecr_repository.app[each.key].name
-
-  policy = jsonencode({
-    Version = "2008-10-17",
-    Statement = [
-      {
-        Sid       = "AllowEcsTasksToPullImages",
-        Effect    = "Allow",
-        Principal = {
-          AWS = var.ecs_execution_role_arn
-        },
-        Action = [
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage",
-          "ecr:BatchCheckLayerAvailability"
-        ]
       }
     ]
   })
