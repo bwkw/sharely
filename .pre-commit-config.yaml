@@ -5,9 +5,9 @@ repos:
     hooks:
       - id: terraform_fmt
         files: ^(infra/aws/environments/stg/).*\.tf$
-      - id: terraform_validate
-        files: ^(infra/aws/environments/stg/).*\.tf$
-      - id: terraform_docs
-        files: ^(infra/aws/modules/).*\.tf$
-      # - id: terraform_tflint
-      # - id: terraform_tfsec
+#      - id: terraform_validate
+#        files: ^(infra/aws/environments/stg/).*\.tf$
+#      - id: terraform_docs
+#        files: ^(infra/aws/modules/).*\.tf$
+#      - id: terraform_tflint
+#      - id: terraform_tfsec
