@@ -72,8 +72,6 @@ module "ecr" {
 
   app_name    = var.app_name
   environment = var.environment
-
-  ecs_execution_role_arn = module.ecs.ecs_execution_role_arn
 }
 
 module "ecs" {
