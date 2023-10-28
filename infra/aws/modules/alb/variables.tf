@@ -13,7 +13,7 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "alb_security_group_ids" {
+variable "security_group_ids" {
   description = "Security Group IDs for Application Load Balancers"
   type = object({
     pub  : list(string),
@@ -21,7 +21,7 @@ variable "alb_security_group_ids" {
   })
 }
 
-variable "alb_subnet_ids" {
+variable "subnet_ids" {
   description = "Subnet IDs for Application Load Balancers"
   type = object({
     pub  : list(string),

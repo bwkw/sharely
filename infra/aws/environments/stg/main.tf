@@ -41,13 +41,13 @@ module "alb" {
   app_name    = var.app_name
 
   vpc_id = module.vpc.vpc_id
-  alb_subnet_ids = {
-    pub  = [module.vpc.subnet_ids["pub_a"], module.vpc.subnet_ids["pub_c"]]
-    pri1 = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
-  }
-  alb_security_group_ids = {
+  security_group_ids = {
     pub  = [module.vpc.security_group_ids["pub_alb"]]
     pri1 = [module.vpc.security_group_ids["pri_alb"]]
+  }
+  subnet_ids = {
+    pub  = [module.vpc.subnet_ids["pub_a"], module.vpc.subnet_ids["pub_c"]]
+    pri1 = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
   }
 }
 
@@ -57,9 +57,9 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  az           = var.az
-  pri2_sub_ids = [module.vpc.subnet_ids["pri2_a"], module.vpc.subnet_ids["pri2_c"]]
-  sg_ids       = [module.vpc.security_group_ids["aurora"]]
+  az                 = var.az
+  pri2_subnet_ids    = [module.vpc.subnet_ids["pri2_a"], module.vpc.subnet_ids["pri2_c"]]
+  security_group_ids = [module.vpc.security_group_ids["aurora"]]
   database = {
     instance_class = var.database_instance_class
     db_username    = var.database_secret.db_username

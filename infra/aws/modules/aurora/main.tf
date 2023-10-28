@@ -22,23 +22,23 @@ resource "aws_rds_cluster" "aurora" {
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
   skip_final_snapshot     = true
-  vpc_security_group_ids  = var.sg_ids
+  vpc_security_group_ids  = var.security_group_ids
   db_subnet_group_name    = aws_db_subnet_group.aurora.name
   availability_zones      = [var.az.a, var.az.c]
 }
 
 resource "aws_rds_cluster_instance" "aurora" {
-  for_each          = var.az
-  identifier        = "${local.common_name_prefix}-aurora-instance-${each.key}"
-  cluster_identifier= aws_rds_cluster.aurora.id
-  instance_class    = var.database.instance_class
-  availability_zone = each.value
-  engine            = "aurora-mysql"
+  for_each           = var.az
+  identifier         = "${local.common_name_prefix}-aurora-instance-${each.key}"
+  cluster_identifier = aws_rds_cluster.aurora.id
+  instance_class     = var.database.instance_class
+  availability_zone  = each.value
+  engine             = "aurora-mysql"
 }
 
 resource "aws_db_subnet_group" "aurora" {
   name       = "${local.common_name_prefix}-aurora-subnet-group"
-  subnet_ids = var.pri2_sub_ids
+  subnet_ids = var.pri2_subnet_ids
 
   tags = {
     Name = "${local.common_name_prefix}-aurora-subnet-group"

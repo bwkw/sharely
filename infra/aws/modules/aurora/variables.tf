@@ -16,12 +16,12 @@ variable "az" {
   })
 }
 
-variable "pri2_sub_ids" {
+variable "pri2_subnet_ids" {
   description = "List of primary subnet IDs"
   type        = list(string)
 }
 
-variable "sg_ids" {
+variable "security_group_ids" {
   description = "List of security group IDs to associate with Aurora"
   type        = list(string)
 }
