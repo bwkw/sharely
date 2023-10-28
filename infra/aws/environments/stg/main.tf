@@ -34,6 +34,24 @@ module "vpc-endpoint" {
   ecr_vpc_endpoint_sg_ids             = [module.vpc.security_groups["ecr_vpc_endpoint"]]
 }
 
+module "alb" {
+  source = "../../modules/alb"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  vpc_id = module.vpc.vpc_id
+  alb_subnet_ids = {
+    pub  = [module.vpc.subnets["pub_a"], module.vpc.subnets["pub_c"]]
+    pri1 = [module.vpc.subnets["pri1_a"], module.vpc.subnets["pri1_c"]]
+  }
+
+  alb_security_group_ids = {
+    pub  = [module.vpc.security_groups["pub_alb"]]
+    pri1 = [module.vpc.security_groups["pri_alb"]]
+  }
+}
+
 module "aurora" {
   source = "../../modules/aurora"
 
@@ -48,19 +66,6 @@ module "aurora" {
   instance_class = var.instance_class
   db_username    = var.db_username
   db_password    = var.db_password
-}
-
-module "alb" {
-  source = "../../modules/alb"
-
-  environment = var.environment
-  app_name    = var.app_name
-
-  vpc_id          = module.vpc.vpc_id
-  pub_sub_ids     = module.vpc.subnets["pub"]
-  pub_alb_sg_ids  = [module.vpc.security_groups["pub_alb"]]
-  pri1_sub_ids    = module.vpc.subnets["pri1"]
-  pri1_alb_sg_ids = [module.vpc.security_groups["pri_alb"]]
 }
 
 module "ecr" {
