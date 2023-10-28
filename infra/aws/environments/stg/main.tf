@@ -29,9 +29,26 @@ module "vpc-endpoint" {
 
   region                              = var.region
   vpc_id                              = module.vpc.vpc_id
-  pri1_sub_ids                        = module.vpc.subnets["pri1"]
-  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_groups["secrets_manager_vpc_endpoint"]]
-  ecr_vpc_endpoint_sg_ids             = [module.vpc.security_groups["ecr_vpc_endpoint"]]
+  pri1_sub_ids                        = module.vpc.subnet_ids["pri1"]
+  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_group_ids["secrets_manager_vpc_endpoint"]]
+  ecr_vpc_endpoint_sg_ids             = [module.vpc.security_group_ids["ecr_vpc_endpoint"]]
+}
+
+module "alb" {
+  source = "../../modules/alb"
+
+  environment = var.environment
+  app_name    = var.app_name
+
+  vpc_id = module.vpc.vpc_id
+  alb_subnet_ids = {
+    pub  = [module.vpc.subnet_ids["pub_a"], module.vpc.subnet_ids["pub_c"]]
+    pri1 = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
+  }
+  alb_security_group_ids = {
+    pub  = [module.vpc.security_group_ids["pub_alb"]]
+    pri1 = [module.vpc.security_group_ids["pri_alb"]]
+  }
 }
 
 module "aurora" {
@@ -42,25 +59,12 @@ module "aurora" {
 
   az_a         = var.az.a
   az_c         = var.az.c
-  pri2_sub_ids = module.vpc.subnets["pri2"]
-  sg_ids       = [module.vpc.security_groups["aurora"]]
+  pri2_sub_ids = module.vpc.subnet_ids["pri2"]
+  sg_ids       = [module.vpc.security_group_ids["aurora"]]
 
   instance_class = var.instance_class
   db_username    = var.db_username
   db_password    = var.db_password
-}
-
-module "alb" {
-  source = "../../modules/alb"
-
-  environment = var.environment
-  app_name    = var.app_name
-
-  vpc_id          = module.vpc.vpc_id
-  pub_sub_ids     = module.vpc.subnets["pub"]
-  pub_alb_sg_ids  = [module.vpc.security_groups["pub_alb"]]
-  pri1_sub_ids    = module.vpc.subnets["pri1"]
-  pri1_alb_sg_ids = [module.vpc.security_groups["pri_alb"]]
 }
 
 module "ecr" {
@@ -79,12 +83,12 @@ module "ecs" {
   environment = var.environment
 
   ecs_tasks_sub_ids = {
-    next_js = module.vpc.subnets["pri1"],
-    go      = module.vpc.subnets["pri1"]
+    next_js = module.vpc.subnet_ids["pri1"],
+    go      = module.vpc.subnet_ids["pri1"]
   }
   ecs_tasks_sg_ids = {
-    next_js = [module.vpc.security_groups["next_js_ecs_tasks"]],
-    go      = [module.vpc.security_groups["go_ecs_tasks"]]
+    next_js = [module.vpc.security_group_ids["next_js_ecs_tasks"]],
+    go      = [module.vpc.security_group_ids["go_ecs_tasks"]]
   }
 
   next_js_image_url = module.ecr.next_js_repository_url
@@ -93,8 +97,8 @@ module "ecs" {
   next_js_image_tag = var.next_js_image_tag
   go_image_tag      = var.go_image_tag
 
-  pub_alb_tg_arn = module.alb.pub_alb_tg_arn
-  pri_alb_tg_arn = module.alb.pri_alb_tg_arn
+  pub_alb_tg_arn = module.alb.alb_target_group_arns["pub"]
+  pri_alb_tg_arn = module.alb.alb_target_group_arns["pri1"]
 
   desired_count             = var.desired_count
   task_cpu                  = var.task_cpu

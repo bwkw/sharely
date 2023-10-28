@@ -13,22 +13,19 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "pub_alb_sg_ids" {
-  description = "Security Group ID for the public Application Load Balancer."
-  type        = list(string)
+variable "alb_security_group_ids" {
+  description = "Security Group IDs for Application Load Balancers"
+  type = object({
+    pub  : list(string),
+    pri1 : list(string),
+  })
 }
 
-variable "pub_sub_ids" {
-  description = "List of subnet IDs for the public Application Load Balancer."
-  type        = list(string)
+variable "alb_subnet_ids" {
+  description = "Subnet IDs for Application Load Balancers"
+  type = object({
+    pub  : list(string),
+    pri1 : list(string),
+  })
 }
 
-variable "pri1_alb_sg_ids" {
-  description = "Security Group ID for the private Application Load Balancer."
-  type        = list(string)
-}
-
-variable "pri1_sub_ids" {
-  description = "List of subnet IDs for the private Application Load Balancer."
-  type        = list(string)
-}
