@@ -15,13 +15,13 @@ locals {
   alb_configs = {
     pub = {
       internal           = false,
-      security_groups    = var.alb_security_group_ids.pub,
-      subnets            = var.alb_subnet_ids.pub
+      security_groups    = var.security_group_ids.pub,
+      subnets            = var.subnet_ids.pub
     },
     pri1 = {
       internal           = true,
-      security_groups    = var.alb_security_group_ids.pri1,
-      subnets            = var.alb_subnet_ids.pri1
+      security_groups    = var.security_group_ids.pri1,
+      subnets            = var.subnet_ids.pri1
     }
   }
 }
