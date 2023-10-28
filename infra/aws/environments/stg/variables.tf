@@ -62,16 +62,19 @@ variable "pri2_subnets" {
   }
 }
 
-variable "db_username" {
-  type = string
-}
-
-variable "db_password" {
-  type      = string
+variable "database_secret" {
+  type = object({
+    db_username = string
+    db_password = string
+  })
+  default = {
+    db_username = ""
+    db_password = ""
+  }
   sensitive = true
 }
 
-variable "instance_class" {
+variable "database_instance_class" {
   type    = string
   default = "db.t4g.medium"
 }

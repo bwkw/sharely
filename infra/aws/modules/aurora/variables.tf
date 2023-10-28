@@ -8,38 +8,30 @@ variable "environment" {
   type        = string
 }
 
-variable "az_a" {
-  description = "Availability Zone for the 1a subnet"
-  type        = string
+variable "az" {
+  description = "The availability zones for the subnets."
+  type = object({
+    a = string
+    c = string
+  })
 }
 
-variable "az_c" {
-  description = "Availability Zone for the 1c subnet"
-  type        = string
-}
-
-variable "pri2_sub_ids" {
+variable "pri2_subnet_ids" {
   description = "List of primary subnet IDs"
   type        = list(string)
 }
 
-variable "sg_ids" {
+variable "security_group_ids" {
   description = "List of security group IDs to associate with Aurora"
   type        = list(string)
 }
 
-variable "instance_class" {
-  description = "The instance type of the RDS instance"
-  type        = string
-}
-
-variable "db_username" {
-  description = "Username for the database"
-  type        = string
-}
-
-variable "db_password" {
-  description = "Password for the database"
-  type        = string
+variable "database" {
+  description = "Database configuration"
+  type = object({
+    instance_class = string
+    db_username    = string
+    db_password    = string
+  })
   sensitive   = true
 }
