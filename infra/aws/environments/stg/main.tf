@@ -17,8 +17,8 @@ module "secrets-manager" {
   app_name    = var.app_name
   environment = var.environment
 
-  db_username = var.db_username
-  db_password = var.db_password
+  db_username = var.database_secret.db_username
+  db_password = var.database_secret.db_password
 }
 
 module "vpc-endpoint" {
@@ -57,14 +57,14 @@ module "aurora" {
   app_name    = var.app_name
   environment = var.environment
 
-  az_a         = var.az.a
-  az_c         = var.az.c
-  pri2_sub_ids = module.vpc.subnet_ids["pri2"]
+  az           = var.az
+  pri2_sub_ids = [module.vpc.subnet_ids["pri2_a"], module.vpc.subnet_ids["pri2_c"]]
   sg_ids       = [module.vpc.security_group_ids["aurora"]]
-
-  instance_class = var.instance_class
-  db_username    = var.db_username
-  db_password    = var.db_password
+  database = {
+    instance_class = var.database_instance_class
+    db_username    = var.database_secret.db_username
+    db_password    = var.database_secret.db_password
+  }
 }
 
 module "ecr" {
