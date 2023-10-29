@@ -34,6 +34,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_repository_arns"></a> [repository\_arns](#output\_repository\_arns) | n/a |
-| <a name="output_repository_urls"></a> [repository\_urls](#output\_repository\_urls) | n/a |
+| <a name="output_repository_arns"></a> [repository\_arns](#output\_repository\_arns) | ECR repository ARNs |
+| <a name="output_repository_urls"></a> [repository\_urls](#output\_repository\_urls) | ECR repository URLs |
 <!-- END_TF_DOCS -->

@@ -32,14 +32,14 @@ No modules.
 | <a name="input_az"></a> [az](#input\_az) | The availability zones for the subnets. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
 | <a name="input_database"></a> [database](#input\_database) | Database configuration | <pre>object({<br>    instance_class = string<br>    db_username    = string<br>    db_password    = string<br>  })</pre> | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name (e.g., 'stg', 'prod') | `string` | n/a | yes |
-| <a name="input_pri2_sub_ids"></a> [pri2\_sub\_ids](#input\_pri2\_sub\_ids) | List of primary subnet IDs | `list(string)` | n/a | yes |
-| <a name="input_sg_ids"></a> [sg\_ids](#input\_sg\_ids) | List of security group IDs to associate with Aurora | `list(string)` | n/a | yes |
+| <a name="input_pri2_subnet_ids"></a> [pri2\_subnet\_ids](#input\_pri2\_subnet\_ids) | List of primary subnet IDs | `list(string)` | n/a | yes |
+| <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | List of security group IDs to associate with Aurora | `list(string)` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aurora_cluster_arn"></a> [aurora\_cluster\_arn](#output\_aurora\_cluster\_arn) | ARN of the Aurora Cluster |
-| <a name="output_aurora_cluster_endpoint"></a> [aurora\_cluster\_endpoint](#output\_aurora\_cluster\_endpoint) | Writer endpoint for the Aurora Cluster |
-| <a name="output_aurora_cluster_reader_endpoint"></a> [aurora\_cluster\_reader\_endpoint](#output\_aurora\_cluster\_reader\_endpoint) | Reader endpoint for the Aurora Cluster |
+| <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of the Aurora Cluster |
+| <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Writer endpoint for the Aurora Cluster |
+| <a name="output_cluster_reader_endpoint"></a> [cluster\_reader\_endpoint](#output\_cluster\_reader\_endpoint) | Reader endpoint for the Aurora Cluster |
 <!-- END_TF_DOCS -->
