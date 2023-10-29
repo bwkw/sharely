@@ -15,11 +15,11 @@ variable "task" {
     cpu           = string
     memory        = string
     subnet_ids = object({
-      frontend         = list(string)
-      backend          = list(string)
+      frontend = list(string)
+      backend  = list(string)
     })
     security_group_ids = object({
-      frontend  = list(string)
+      frontend = list(string)
       backend  = list(string)
     })
   })
@@ -53,7 +53,7 @@ variable "autoscaling" {
 variable "alb_target_group_arns" {
   description = "ALB target groups ARNs"
   type = object({
-    pub  = string
+    pub = string
     pri = string
   })
 }

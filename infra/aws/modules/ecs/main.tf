@@ -13,20 +13,20 @@ locals {
 
   task_definitions = {
     "frontend" = {
-      image_url = var.images.url.frontend
-      image_tag = var.images.tag.frontend
+      image_url             = var.images.url.frontend
+      image_tag             = var.images.tag.frontend
       container_name_suffix = "next-js-container"
-      subnet_ids = var.task.subnet_ids.frontend
-      security_group_ids = var.task.security_group_ids.frontend
-      target_group_arn = var.alb_target_group_arns.pub
+      subnet_ids            = var.task.subnet_ids.frontend
+      security_group_ids    = var.task.security_group_ids.frontend
+      target_group_arn      = var.alb_target_group_arns.pub
     }
     "backend" = {
-      image_url = var.images.url.backend
-      image_tag = var.images.tag.backend
+      image_url             = var.images.url.backend
+      image_tag             = var.images.tag.backend
       container_name_suffix = "go-container"
-      subnet_ids = var.task.subnet_ids.backend
-      security_group_ids = var.task.security_group_ids.backend
-      target_group_arn = var.alb_target_group_arns.pri
+      subnet_ids            = var.task.subnet_ids.backend
+      security_group_ids    = var.task.security_group_ids.backend
+      target_group_arn      = var.alb_target_group_arns.pri
     }
   }
 }
