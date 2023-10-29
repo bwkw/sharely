@@ -1,6 +1,6 @@
 output "cluster_arn" {
-  value       = aws_ecs_cluster.main.arn
   description = "The ARN of the ECS cluster."
+  value       = aws_ecs_cluster.main.arn
 }
 
 output "task_definition_arn" {
