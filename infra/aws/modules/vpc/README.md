@@ -50,19 +50,19 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | n/a | `string` | n/a | yes |
-| <a name="input_az"></a> [az](#input\_az) | n/a | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | n/a | `string` | n/a | yes |
-| <a name="input_pri1_subnets"></a> [pri1\_subnets](#input\_pri1\_subnets) | n/a | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
-| <a name="input_pri2_subnets"></a> [pri2\_subnets](#input\_pri2\_subnets) | n/a | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
-| <a name="input_pub_subnets"></a> [pub\_subnets](#input\_pub\_subnets) | n/a | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
-| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | n/a | `string` | n/a | yes |
+| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the application. | `string` | n/a | yes |
+| <a name="input_az"></a> [az](#input\_az) | The availability zones for the subnets. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'. | `string` | n/a | yes |
+| <a name="input_pri1_subnets"></a> [pri1\_subnets](#input\_pri1\_subnets) | The private subnets for the VPC. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
+| <a name="input_pri2_subnets"></a> [pri2\_subnets](#input\_pri2\_subnets) | The private subnets for the VPC. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
+| <a name="input_pub_subnets"></a> [pub\_subnets](#input\_pub\_subnets) | The public subnets for the VPC. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
+| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The CIDR block for the VPC. | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | n/a |
-| <a name="output_subnets"></a> [subnets](#output\_subnets) | n/a |
-| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the VPC |
+| <a name="output_security_group_ids"></a> [security\_group\_ids](#output\_security\_group\_ids) | List of security group IDs |
+| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | List of subnet IDs |
 <!-- END_TF_DOCS -->
