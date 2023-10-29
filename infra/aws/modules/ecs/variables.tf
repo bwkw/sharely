@@ -8,82 +8,52 @@ variable "environment" {
   type        = string
 }
 
-variable "desired_count" {
-  description = "The desired number of instantiations of the specified task definition to keep running on the service"
-  type        = number
+variable "task" {
+  description = "Task related configurations"
+  type = object({
+    desired_count = number
+    cpu           = string
+    memory        = string
+    subnet_ids = object({
+      frontend         = list(string)
+      backend          = list(string)
+    })
+    security_group_ids = object({
+      frontend  = list(string)
+      backend  = list(string)
+    })
+  })
 }
 
-variable "task_cpu" {
-  description = "The amount of CPU used by the task"
-  type        = string
+variable "images" {
+  description = "Docker image configurations"
+  type = object({
+    url = object({
+      frontend = string
+      backend  = string
+    })
+    tag = object({
+      frontend = string
+      backend  = string
+    })
+  })
 }
 
-variable "task_memory" {
-  description = "The amount of memory used by the task"
-  type        = string
+variable "autoscaling" {
+  description = "Autoscaling related configurations"
+  type = object({
+    cpu_scale_up_target_value = number
+    scale_out_cooldown        = number
+    scale_in_cooldown         = number
+    min_capacity              = number
+    max_capacity              = number
+  })
 }
 
-variable "ecs_tasks_sub_ids" {
-  description = "Map of subnets for ECS tasks"
-  type        = map(list(string))
-}
-
-variable "ecs_tasks_sg_ids" {
-  description = "Map of security groups for ECS tasks"
-  type        = map(list(string))
-}
-
-variable "next_js_image_url" {
-  description = "ECR URL for the Next.js Application"
-  type        = string
-}
-
-variable "go_image_url" {
-  description = "ECR URL for the Go application"
-  type        = string
-}
-
-variable "next_js_image_tag" {
-  description = "ECR Image Tag for the Next.js Application"
-  type = string
-}
-
-variable "go_image_tag" {
-  description = "ECR Image Tag for the Go Application"
-  type = string
-}
-
-variable "cpu_scale_up_target_value" {
-  description = "Target value for CPU utilization to trigger scale up."
-  type        = number
-}
-
-variable "scale_out_cooldown" {
-  description = "Cooldown period (in seconds) after a scale-out activity completes."
-  type        = number
-}
-
-variable "scale_in_cooldown" {
-  description = "Cooldown period (in seconds) after a scale-in activity completes."
-  type        = number
-}
-
-variable "autoscaling_min_capacity" {
-  description = "Minimum capacity for application autoscaling."
-  type        = number
-}
-
-variable "autoscaling_max_capacity" {
-  description = "Maximum capacity for application autoscaling."
-  type        = number
-}
-
-variable "pub_alb_tg_arn" {
-  description = "The ARN of the public ALB target group for the ECS service"
-  type        = string
-}
-
-variable "pri_alb_tg_arn" {
-  description = "The ARN of the private ALB target group for the ECS service"
-  type        = string
+variable "alb_target_group_arns" {
+  description = "ALB target groups ARNs"
+  type = object({
+    pub  = string
+    pri = string
+  })
 }

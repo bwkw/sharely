@@ -79,54 +79,52 @@ variable "database_instance_class" {
   default = "db.t4g.medium"
 }
 
-variable "desired_count" {
-  type    = number
-  default = 2
+variable "task" {
+  description = "Task related configurations"
+  type = object({
+    desired_count = number
+    cpu           = string
+    memory        = string
+  })
+  default = {
+    desired_count = 2
+    cpu           = "256" # 0.25 vCPU
+    memory        = "512"
+  }
 }
 
-variable "task_cpu" {
-  type    = string
-  default = "256" # 0.25 vCPU
+variable "images" {
+  description = "Docker image configurations"
+  type = object({
+    tag = object({
+      frontend = string
+      backend  = string
+    })
+  })
+  default = {
+    tag = {
+      frontend = "test"
+      backend  = "test"
+    }
+  }
 }
 
-variable "task_memory" {
-  type    = string
-  default = "512"
-}
-
-variable "next_js_image_tag" {
-  type    = string
-  default = "test"
-}
-
-variable "go_image_tag" {
-  type    = string
-  default = "test"
-}
-
-variable "cpu_scale_up_target_value" {
-  type    = number
-  default = 80
-}
-
-variable "scale_out_cooldown" {
-  type    = number
-  default = 60
-}
-
-variable "scale_in_cooldown" {
-  type    = number
-  default = 300
-}
-
-variable "autoscaling_min_capacity" {
-  type    = number
-  default = 1
-}
-
-variable "autoscaling_max_capacity" {
-  type    = number
-  default = 2
+variable "autoscaling" {
+  description = "Autoscaling related configurations"
+  type = object({
+    cpu_scale_up_target_value = number
+    scale_out_cooldown        = number
+    scale_in_cooldown         = number
+    min_capacity              = number
+    max_capacity              = number
+  })
+  default = {
+    cpu_scale_up_target_value = 80
+    scale_out_cooldown        = 60
+    scale_in_cooldown         = 300
+    min_capacity              = 1
+    max_capacity              = 2
+  }
 }
 
 variable "iam_role_oidc_thumbprint" {

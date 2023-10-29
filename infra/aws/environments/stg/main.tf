@@ -28,7 +28,7 @@ module "vpc-endpoint" {
   environment = var.environment
 
   region                              = var.region
-  vpc_id                              = module.vpc.vpc_id
+  vpc_id                              = module.vpc.id
   pri1_sub_ids                        = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
   secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_group_ids["secrets_manager_vpc_endpoint"]]
   ecr_vpc_endpoint_sg_ids             = [module.vpc.security_group_ids["ecr_vpc_endpoint"]]
@@ -40,7 +40,7 @@ module "alb" {
   environment = var.environment
   app_name    = var.app_name
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = module.vpc.id
   security_group_ids = {
     pub  = [module.vpc.security_group_ids["pub_alb"]]
     pri1 = [module.vpc.security_group_ids["pri_alb"]]
