@@ -1,4 +1,4 @@
-output "alb_target_group_arns" {
+output "target_group_arns" {
   description = "The ARNs of the ALB target groups for the ECS service"
   value = {
     pub  = aws_lb_target_group.alb["pub"].arn,
