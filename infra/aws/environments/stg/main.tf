@@ -29,7 +29,7 @@ module "vpc-endpoint" {
 
   region                              = var.region
   vpc_id                              = module.vpc.vpc_id
-  pri1_sub_ids                        = module.vpc.subnet_ids["pri1"]
+  pri1_sub_ids                        = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
   secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_group_ids["secrets_manager_vpc_endpoint"]]
   ecr_vpc_endpoint_sg_ids             = [module.vpc.security_group_ids["ecr_vpc_endpoint"]]
 }
@@ -80,32 +80,40 @@ module "ecs" {
   app_name    = var.app_name
   environment = var.environment
 
-  ecs_tasks_sub_ids = {
-    next_js = module.vpc.subnet_ids["pri1"],
-    go      = module.vpc.subnet_ids["pri1"]
+  images = {
+    url = {
+      frontend = module.ecr.repository_urls["frontend"],
+      backend  = module.ecr.repository_urls["backend"],
+    }
+    tag = {
+      frontend = var.images.tag.frontend
+      backend  = var.images.tag.backend
+    }
   }
-  ecs_tasks_sg_ids = {
-    next_js = [module.vpc.security_group_ids["next_js_ecs_tasks"]],
-    go      = [module.vpc.security_group_ids["go_ecs_tasks"]]
+  task = {
+    desired_count = var.task.desired_count
+    cpu           = var.task.cpu
+    memory        = var.task.memory
+    subnet_ids = {
+      frontend = [module.vpc.subnet_ids["pub_a"], module.vpc.subnet_ids["pub_c"]]
+      backend  = [module.vpc.subnet_ids["pub_a"], module.vpc.subnet_ids["pub_c"]]
+    }
+    security_group_ids = {
+      frontend = [module.vpc.security_group_ids["frontend_ecs_tasks"]]
+      backend  = [module.vpc.security_group_ids["backend_ecs_tasks"]]
+    }
   }
-
-  next_js_image_url = module.ecr.repository_urls["frontend"]
-  go_image_url      = module.ecr.repository_urls["backend"]
-
-  next_js_image_tag = var.next_js_image_tag
-  go_image_tag      = var.go_image_tag
-
-  pub_alb_tg_arn = module.alb.alb_target_group_arns["pub"]
-  pri_alb_tg_arn = module.alb.alb_target_group_arns["pri1"]
-
-  desired_count             = var.desired_count
-  task_cpu                  = var.task_cpu
-  task_memory               = var.task_memory
-  cpu_scale_up_target_value = var.cpu_scale_up_target_value
-  scale_out_cooldown        = var.scale_out_cooldown
-  scale_in_cooldown         = var.scale_in_cooldown
-  autoscaling_min_capacity  = var.autoscaling_min_capacity
-  autoscaling_max_capacity  = var.autoscaling_max_capacity
+  autoscaling = {
+    cpu_scale_up_target_value = var.autoscaling.cpu_scale_up_target_value
+    scale_out_cooldown        = var.autoscaling.scale_out_cooldown
+    scale_in_cooldown         = var.autoscaling.scale_in_cooldown
+    min_capacity              = var.autoscaling.min_capacity
+    max_capacity              = var.autoscaling.max_capacity
+  }
+  alb_target_group_arns = {
+    pub = module.alb.target_group_arns["pub"]
+    pri = module.alb.target_group_arns["pri1"]
+  }
 }
 
 module "oidc" {
