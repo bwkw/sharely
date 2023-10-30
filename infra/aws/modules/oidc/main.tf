@@ -9,6 +9,10 @@ terraform {
   }
 }
 
+locals {
+  common_name_prefix = "${var.app_name}-${var.environment}"  
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = [var.sts_audience]
@@ -16,7 +20,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "${var.app_name}-${var.environment}-oidc-role"
+  name = "${common_name_prefix}-oidc-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -35,7 +39,7 @@ resource "aws_iam_role" "github_actions" {
   })
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-iam-role-github-actions"
+    Name = "${common_name_prefix}-iam-role-github-actions"
   }
 }
 
