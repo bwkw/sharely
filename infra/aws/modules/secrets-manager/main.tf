@@ -9,13 +9,12 @@ terraform {
   }
 }
 
-resource "aws_secretsmanager_secret" "aurora_credentials" {
-  name = "${var.app_name}-${var.environment}-aurora-credentials"
+locals {
+  common_name_prefix = "${var.app_name}-${var.environment}"
+}
 
-  tags = {
-    Environment = var.environment
-    Application = var.app_name
-  }
+resource "aws_secretsmanager_secret" "aurora_credentials" {
+  name = "${local.common_name_prefix}-aurora-credentials"
 
 #   普通に消してしまうと復元待機期間に引っかかってしまうので消さないように
 #   lifecycle {
@@ -28,5 +27,5 @@ resource "aws_secretsmanager_secret" "aurora_credentials" {
 
 resource "aws_secretsmanager_secret_version" "aurora_credentials_version" {
   secret_id     = aws_secretsmanager_secret.aurora_credentials.id
-  secret_string = "{\"username\":\"${var.db_username}\", \"password\":\"${var.db_password}\"}"
+  secret_string = "{\"username\":\"${var.database.username}\", \"password\":\"${var.database.password}\"}"
 }

@@ -17,8 +17,10 @@ module "secrets-manager" {
   app_name    = var.app_name
   environment = var.environment
 
-  db_username = var.database_secret.db_username
-  db_password = var.database_secret.db_password
+  database = {
+    username = var.database_secret.username
+    password = var.database_secret.password
+  }
 }
 
 module "vpc-endpoint" {
