@@ -64,12 +64,12 @@ variable "pri2_subnets" {
 
 variable "database_secret" {
   type = object({
-    db_username = string
-    db_password = string
+    username = string
+    password = string
   })
   default = {
-    db_username = ""
-    db_password = ""
+    username = ""
+    password = ""
   }
   sensitive = true
 }

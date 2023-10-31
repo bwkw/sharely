@@ -20,7 +20,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "${common_name_prefix}-oidc-role"
+  name = "${local.common_name_prefix}-oidc-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -39,7 +39,7 @@ resource "aws_iam_role" "github_actions" {
   })
 
   tags = {
-    Name = "${common_name_prefix}-iam-role-github-actions"
+    Name = "${local.common_name_prefix}-iam-role-github-actions"
   }
 }
 
