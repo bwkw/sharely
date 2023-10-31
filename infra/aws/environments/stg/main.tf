@@ -62,8 +62,8 @@ module "aurora" {
   security_group_ids = [module.vpc.security_group_ids["aurora"]]
   database = {
     instance_class = var.database_instance_class
-    db_username    = var.database_secret.db_username
-    db_password    = var.database_secret.db_password
+    username       = var.database_secret.username
+    password       = var.database_secret.password
   }
 }
 
