@@ -8,13 +8,11 @@ variable "environment" {
   type        = string
 }
 
-variable "db_username" {
-  description = "Username for the database"
-  type        = string
-}
-
-variable "db_password" {
-  description = "Password for the database"
-  type        = string
+variable "database" {
+  description = "Database related configurations"
+  type = object({
+    username = string
+    password = string
+  })
   sensitive   = true
 }

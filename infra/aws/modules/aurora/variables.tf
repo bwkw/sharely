@@ -30,8 +30,8 @@ variable "database" {
   description = "Database configuration"
   type = object({
     instance_class = string
-    db_username    = string
-    db_password    = string
+    username       = string
+    password       = string
   })
   sensitive   = true
 }
