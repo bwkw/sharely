@@ -18,7 +18,8 @@ output "security_group_ids" {
     pri_alb                      = aws_security_group.pri_alb.id,
     backend_ecs_tasks            = aws_security_group.backend_ecs_tasks.id
     aurora                       = aws_security_group.aurora.id,
-    secrets_manager_vpc_endpoint = aws_security_group.secrets_manager_vpc_endpoint.id,
-    ecr_vpc_endpoint             = aws_security_group.ecr_vpc_endpoint.id
+    vpc_endpoint_secrets_manager = aws_security_group.vpc_endpoint_secrets_manager.id,
+    vpc_endpoint_ecr_api         = aws_security_group.vpc_endpoint_ecr_api.id
+    vpc_endpoint_ecr_dkr         = aws_security_group.vpc_endpoint_ecr_dkr.id
   }
 }
