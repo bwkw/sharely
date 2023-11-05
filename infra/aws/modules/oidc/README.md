@@ -29,9 +29,9 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Name of the application | `string` | n/a | yes |
+| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the application. | `string` | n/a | yes |
 | <a name="input_ecr_repository_arns"></a> [ecr\_repository\_arns](#input\_ecr\_repository\_arns) | List of ECR repository ARNs | `list(string)` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | The environment where the ECS service will be deployed (e.g., dev, staging, prod) | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'. | `string` | n/a | yes |
 | <a name="input_github_actions"></a> [github\_actions](#input\_github\_actions) | Github Actions related configurations | <pre>object({<br>    repository = string<br>    branch     = string<br>  })</pre> | n/a | yes |
 | <a name="input_oidc_thumbprint"></a> [oidc\_thumbprint](#input\_oidc\_thumbprint) | Thumbprint of the OIDC provider | `string` | n/a | yes |
 | <a name="input_sts_audience"></a> [sts\_audience](#input\_sts\_audience) | Audience of the OIDC provider | `string` | n/a | yes |

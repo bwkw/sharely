@@ -28,10 +28,10 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Application name | `string` | n/a | yes |
+| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the application. | `string` | n/a | yes |
 | <a name="input_az"></a> [az](#input\_az) | The availability zones for the subnets. | <pre>object({<br>    a = string<br>    c = string<br>  })</pre> | n/a | yes |
-| <a name="input_database"></a> [database](#input\_database) | Database configuration | <pre>object({<br>    instance_class = string<br>    db_username    = string<br>    db_password    = string<br>  })</pre> | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | Environment name (e.g., 'stg', 'prod') | `string` | n/a | yes |
+| <a name="input_database"></a> [database](#input\_database) | Database configuration | <pre>object({<br>    instance_class = string<br>    username       = string<br>    password       = string<br>  })</pre> | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'. | `string` | n/a | yes |
 | <a name="input_pri2_subnet_ids"></a> [pri2\_subnet\_ids](#input\_pri2\_subnet\_ids) | List of primary subnet IDs | `list(string)` | n/a | yes |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | List of security group IDs to associate with Aurora | `list(string)` | n/a | yes |
 
