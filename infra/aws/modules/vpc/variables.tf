@@ -1,16 +1,16 @@
 variable "app_name" {
   description = "The name of the application."
-  type = string
+  type        = string
 }
 
 variable "environment" {
   description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
-  type = string
+  type        = string
 }
 
 variable "vpc_cidr" {
   description = "The CIDR block for the VPC."
-  type = string
+  type        = string
 }
 
 variable "az" {

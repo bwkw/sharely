@@ -4,7 +4,6 @@ variable "app_name" {
 }
 
 variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
+  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
   type        = string
 }
-
