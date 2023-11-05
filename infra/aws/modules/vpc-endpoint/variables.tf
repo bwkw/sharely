@@ -1,10 +1,10 @@
 variable "app_name" {
-  description = "Application name"
+  description = "The name of the application."
   type        = string
 }
 
 variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
+  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
   type        = string
 }
 
@@ -18,17 +18,16 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "pri1_sub_ids" {
+variable "pri1_subnet_ids" {
   description = "List of primary subnet IDs"
   type        = list(string)
 }
 
-variable "secrets_manager_vpc_endpoint_sg_ids" {
-  description = "List of security group IDs for Secrets Manager VPC Endpoint"
-  type        = list(string)
-}
-
-variable "ecr_vpc_endpoint_sg_ids" {
-  description = "List of security group IDs for ECR VPC Endpoint"
-  type        = list(string)
+variable "vpc_endpoint_sg_ids" {
+  description = "A map of security group IDs for VPC endpoints"
+  type = object({
+    ecr_api         = list(string)
+    ecr_dkr         = list(string)
+    secrets_manager = list(string)
+  })
 }

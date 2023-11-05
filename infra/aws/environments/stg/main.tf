@@ -1,41 +1,3 @@
-module "vpc" {
-  source = "../../modules/vpc"
-
-  app_name    = var.app_name
-  environment = var.environment
-
-  vpc_cidr     = var.vpc_cidr
-  az           = var.az
-  pub_subnets  = var.pub_subnets
-  pri1_subnets = var.pri1_subnets
-  pri2_subnets = var.pri2_subnets
-}
-
-module "secrets-manager" {
-  source = "../../modules/secrets-manager"
-
-  app_name    = var.app_name
-  environment = var.environment
-
-  database = {
-    username = var.database_secret.username
-    password = var.database_secret.password
-  }
-}
-
-module "vpc-endpoint" {
-  source = "../../modules/vpc-endpoint"
-
-  app_name    = var.app_name
-  environment = var.environment
-
-  region                              = var.region
-  vpc_id                              = module.vpc.id
-  pri1_sub_ids                        = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
-  secrets_manager_vpc_endpoint_sg_ids = [module.vpc.security_group_ids["secrets_manager_vpc_endpoint"]]
-  ecr_vpc_endpoint_sg_ids             = [module.vpc.security_group_ids["ecr_vpc_endpoint"]]
-}
-
 module "alb" {
   source = "../../modules/alb"
 
@@ -128,4 +90,45 @@ module "oidc" {
   oidc_thumbprint     = var.iam_role_oidc_thumbprint
   github_actions      = var.iam_role_github_actions
   sts_audience        = var.sts_audience
+}
+
+module "secrets-manager" {
+  source = "../../modules/secrets-manager"
+
+  app_name    = var.app_name
+  environment = var.environment
+
+  database = {
+    username = var.database_secret.username
+    password = var.database_secret.password
+  }
+}
+
+module "vpc" {
+  source = "../../modules/vpc"
+
+  app_name    = var.app_name
+  environment = var.environment
+
+  vpc_cidr     = var.vpc_cidr
+  az           = var.az
+  pub_subnets  = var.pub_subnets
+  pri1_subnets = var.pri1_subnets
+  pri2_subnets = var.pri2_subnets
+}
+
+module "vpc-endpoint" {
+  source = "../../modules/vpc-endpoint"
+
+  app_name    = var.app_name
+  environment = var.environment
+
+  region          = var.region
+  vpc_id          = module.vpc.id
+  pri1_subnet_ids = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
+  vpc_endpoint_sg_ids = {
+    ecr_api         = [module.vpc.security_group_ids["vpc_endpoint_ecr_api"]]
+    ecr_dkr         = [module.vpc.security_group_ids["vpc_endpoint_ecr_dkr"]]
+    secrets_manager = [module.vpc.security_group_ids["vpc_endpoint_secrets_manager"]]
+  }
 }

@@ -1,10 +1,10 @@
 variable "app_name" {
-  description = "Application name"
+  description = "The name of the application."
   type        = string
 }
 
 variable "environment" {
-  description = "Environment name (e.g., 'stg', 'prod')"
+  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
   type        = string
 }
 

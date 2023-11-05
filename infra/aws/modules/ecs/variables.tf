@@ -1,10 +1,10 @@
 variable "app_name" {
-  description = "Name of the application"
+  description = "The name of the application."
   type        = string
 }
 
 variable "environment" {
-  description = "The environment where the ECS service will be deployed (e.g., dev, staging, prod)"
+  description = "The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'."
   type        = string
 }
 
