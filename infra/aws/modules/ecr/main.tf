@@ -25,7 +25,8 @@ locals {
 resource "aws_ecr_repository" "common" {
   for_each = local.ecr_repositories
 
-  name = each.value.name
+  name                 = each.value.name
+  image_tag_mutability = "IMMUTABLE"
 
   tags = {
     Name        = each.value.name
