@@ -22,6 +22,7 @@ No modules.
 |------|------|
 | [aws_vpc_endpoint.ecr_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
 | [aws_vpc_endpoint.ecr_dkr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
 | [aws_vpc_endpoint.secrets_manager](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
 
 ## Inputs
@@ -31,6 +32,7 @@ No modules.
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the application. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment where infrastructure is deployed, e.g., 'dev', 'stg', 'prod'. | `string` | n/a | yes |
 | <a name="input_pri1_subnet_ids"></a> [pri1\_subnet\_ids](#input\_pri1\_subnet\_ids) | List of primary subnet IDs | `list(string)` | n/a | yes |
+| <a name="input_pri_route_table_id"></a> [pri\_route\_table\_id](#input\_pri\_route\_table\_id) | The ID of the private route table | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | n/a | yes |
 | <a name="input_vpc_endpoint_sg_ids"></a> [vpc\_endpoint\_sg\_ids](#input\_vpc\_endpoint\_sg\_ids) | A map of security group IDs for VPC endpoints | <pre>object({<br>    ecr_api         = list(string)<br>    ecr_dkr         = list(string)<br>    secrets_manager = list(string)<br>  })</pre> | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC | `string` | n/a | yes |
