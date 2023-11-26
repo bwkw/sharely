@@ -123,9 +123,10 @@ module "vpc-endpoint" {
   app_name    = var.app_name
   environment = var.environment
 
-  region          = var.region
-  vpc_id          = module.vpc.id
-  pri1_subnet_ids = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
+  region             = var.region
+  vpc_id             = module.vpc.id
+  pri_route_table_id = module.vpc.route_table_ids.pri
+  pri1_subnet_ids    = [module.vpc.subnet_ids["pri1_a"], module.vpc.subnet_ids["pri1_c"]]
   vpc_endpoint_sg_ids = {
     ecr_api         = [module.vpc.security_group_ids["vpc_endpoint_ecr_api"]]
     ecr_dkr         = [module.vpc.security_group_ids["vpc_endpoint_ecr_dkr"]]

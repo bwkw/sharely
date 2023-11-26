@@ -3,6 +3,14 @@ output "id" {
   value = aws_vpc.main.id
 }
 
+output "route_table_ids" {
+  description = "The ID of the route table"
+  value = {
+    pub = aws_route_table.pub.id
+    pri = aws_route_table.pri.id
+  }
+}
+
 output "subnet_ids" {
   description = "List of subnet IDs"
   value = {

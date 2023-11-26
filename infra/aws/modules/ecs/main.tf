@@ -113,10 +113,10 @@ resource "aws_ecs_task_definition" "common" {
       hostPort      = 80
     }]
   }])
-  #  runtime_platform {
-  #    operating_system_family = "LINUX"
-  #    cpu_architecture = "ARM64"
-  #  }
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture = "ARM64"
+  }
 
   tags = {
     Name = "${local.common_name_prefix}-ecs-task-definition"

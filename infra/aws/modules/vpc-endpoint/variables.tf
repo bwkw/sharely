@@ -18,6 +18,11 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "pri_route_table_id" {
+  description = "The ID of the private route table"
+  type        = string  
+}
+
 variable "pri1_subnet_ids" {
   description = "List of primary subnet IDs"
   type        = list(string)

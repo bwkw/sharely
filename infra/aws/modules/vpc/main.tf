@@ -186,17 +186,12 @@ resource "aws_security_group_rule" "frontend_ecs_tasks_ingress" {
 }
 
 resource "aws_security_group_rule" "frontend_ecs_tasks_egress" {
-  for_each = {
-    to_pri_alb      = { port = 80, sg = aws_security_group.pri_alb.id },
-    to_ecr_endpoint = { port = 443, sg = aws_security_group.vpc_endpoint_ecr_dkr.id }
-  }
-
-  security_group_id        = aws_security_group.frontend_ecs_tasks.id
-  type                     = "egress"
-  from_port                = each.value["port"]
-  to_port                  = each.value["port"]
-  protocol                 = "tcp"
-  source_security_group_id = each.value["sg"]
+  security_group_id = aws_security_group.frontend_ecs_tasks.id
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 # プライベートALBのセキュリティグループ
@@ -261,19 +256,12 @@ resource "aws_security_group_rule" "backend_ecs_tasks_ingress" {
 }
 
 resource "aws_security_group_rule" "backend_ecs_tasks_egress" {
-  for_each = {
-    to_ecr_api_endpoint         = { port = 443, sg = aws_security_group.vpc_endpoint_ecr_api.id },
-    to_ecr_dkr_endpoint         = { port = 443, sg = aws_security_group.vpc_endpoint_ecr_dkr.id },
-    to_secrets_manager_endpoint = { port = 443, sg = aws_security_group.vpc_endpoint_secrets_manager.id },
-    to_aurora                   = { port = 3306, sg = aws_security_group.aurora.id }
-  }
-
-  security_group_id        = aws_security_group.backend_ecs_tasks.id
-  type                     = "egress"
-  from_port                = each.value["port"]
-  to_port                  = each.value["port"]
-  protocol                 = "tcp"
-  source_security_group_id = each.value["sg"]
+  security_group_id = aws_security_group.backend_ecs_tasks.id
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 # Auroraのセキュリティグループ
@@ -346,6 +334,15 @@ resource "aws_security_group_rule" "vpc_endpoint_ecr_api_ingress" {
   source_security_group_id = each.value["sg"]
 }
 
+resource "aws_security_group_rule" "vpc_endpoint_ecr_api_egress" {
+  security_group_id = aws_security_group.vpc_endpoint_ecr_api.id
+  type              = "egress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 resource "aws_security_group" "vpc_endpoint_ecr_dkr" {
   name   = "${local.common_name_prefix}-vpc-endpoint-ecr-dkr-sg"
   vpc_id = aws_vpc.main.id
@@ -367,4 +364,13 @@ resource "aws_security_group_rule" "vpc_endpoint_ecr_dkr_ingress" {
   to_port                  = each.value["port"]
   protocol                 = "tcp"
   source_security_group_id = each.value["sg"]
+}
+
+resource "aws_security_group_rule" "vpc_endpoint_ecr_dkr_egress" {
+  security_group_id = aws_security_group.vpc_endpoint_ecr_dkr.id
+  type              = "egress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
