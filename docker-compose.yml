@@ -8,7 +8,7 @@ services:
     container_name: client
     build: 
       context: ./client
-      dockerfile: ../infra/docker/client/Dockerfile.dev
+      dockerfile: ../sharely-terraform/infra/docker/client/Dockerfile.dev
     volumes:
       - type: bind
         source: ./client
@@ -22,7 +22,7 @@ services:
     container_name: server
     build: 
       context: ./server
-      dockerfile: ../infra/docker/server/Dockerfile.dev
+      dockerfile: ../sharely-terraform/infra/docker/server/Dockerfile.dev
     volumes:
       - type: bind
         source: ./server
@@ -41,7 +41,7 @@ services:
   db:
     container_name: db
     build:
-      context: ./infra/docker/db
+      context: docker/db
       dockerfile: Dockerfile.dev
     volumes:
       - type: volume
