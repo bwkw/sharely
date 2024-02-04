@@ -37,7 +37,7 @@ jobs:
           ECR_REPOSITORY: "sharely-stg-frontend"
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -f infra/docker/client/Dockerfile.stg -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./client
+          docker build -f docker/client/Dockerfile.stg -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./client
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Download task definition
