@@ -39,6 +39,7 @@ jobs:
         run: |
           docker build -f docker/client/Dockerfile.stg -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./client
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download task definition
         run: |
