@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - stg
+      - feature/change-ecs-x64-to-arm
 
 jobs:
   build-and-push:
